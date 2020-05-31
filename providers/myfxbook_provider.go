@@ -4,7 +4,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/geziyor/geziyor"
 	"github.com/geziyor/geziyor/client"
-	"github.com/gonamore/fxbd/models"
+	"github.com/gonamore/fxbd/account/models"
 	"log"
 	"math"
 	"regexp"

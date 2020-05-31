@@ -1,6 +1,6 @@
 package models
 
-import "github.com/gonamore/fxbd/models"
+import "github.com/gonamore/fxbd/account/models"
 
 // Describes all possible application configuration options
 type ApplicationConfig struct {

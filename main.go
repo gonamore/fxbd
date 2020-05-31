@@ -1,9 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"github.com/gonamore/fxbd/account"
 	"github.com/gonamore/fxbd/config"
-	"github.com/gonamore/fxbd/providers"
-	"github.com/gonamore/fxbd/storages"
 	"log"
 )
 
@@ -18,15 +18,15 @@ func main() {
 	}
 	log.Println(applicationConfig)
 
-	myfxbookProvider := providers.NewMyfxbookProvider()
-	accountStats := myfxbookProvider.Get(applicationConfig.Accounts[0])
-
-	storage := storages.NewFilesystemStorage(applicationConfig, &applicationConfig.Accounts[0])
-	err = storage.Save(accountStats)
-	if err != nil {
-		log.Fatal("Cannot save stats", err)
-		return
+	for _, accountConfig := range applicationConfig.Accounts {
+		worker := account.NewWorker(applicationConfig)
+		go worker.Start(accountConfig)
 	}
+
+	fmt.Print("Enter text: \n")
+	var input string
+	fmt.Scanln(&input)
+	fmt.Print(input)
 
 	println("finish")
 }

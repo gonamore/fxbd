@@ -2,8 +2,8 @@ package storages
 
 import (
 	"encoding/json"
+	accmodels "github.com/gonamore/fxbd/account/models"
 	cfgmodels "github.com/gonamore/fxbd/config/models"
-	accmodels "github.com/gonamore/fxbd/models"
 	"io/ioutil"
 	"log"
 	"os"
