@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ .Title}}</title>
+    <link rel="stylesheet" type="text/css" href="static/style.css"></head>
+<body>
+<h1>{{ .Title}}</h1>
+{{range .Accounts}}
+    <ul>
+        {{ if . }}
+            <li>Name: <b>{{ .Config.Name }}</b></li>
+            {{ if .Stats.Balance }}
+                <li>Balance: <b>{{ .Stats.Balance }}</b></li>
+            {{else}}
+                <li>Balance: <b>-</b></li>
+            {{ end }}
+
+            {{ if .Stats.Equity }}
+                <li>Equity: <b>{{ .Stats.Equity }}</b></li>
+            {{else}}
+                <li>Equity: <b>-</b></li>
+            {{ end }}
+        {{ end }}
+    </ul>
+{{end}}
+</body>
+</html>

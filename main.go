@@ -4,6 +4,7 @@ import (
 	"github.com/gonamore/fxbd/account"
 	"github.com/gonamore/fxbd/config"
 	"github.com/gonamore/fxbd/webserver"
+	"github.com/gonamore/fxbd/workers"
 	"log"
 )
 
@@ -22,6 +23,12 @@ func main() {
 		worker := account.NewWorker(applicationConfig)
 		go worker.Start(accountConfig)
 	}
+
+	// generate results
+	//reporter := reporters.NewHtmlComposer(applicationConfig)
+	//go reporter.Assemble()
+	reporterWorker := workers.NewReporterWorker(applicationConfig)
+	go reporterWorker.Start()
 
 	// start web server
 	////http.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {

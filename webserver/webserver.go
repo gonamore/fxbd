@@ -3,11 +3,11 @@ package webserver
 import (
 	"context"
 	"github.com/gonamore/fxbd/config/models"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"path"
 	"strconv"
 	"time"
 )
@@ -26,11 +26,12 @@ func (rcv *WebServer) Start() {
 	//})
 	//log.Fatal(http.ListenAndServe(":" + strconv.Itoa(rcv.applicationConfig.Port), nil))
 
-	server := &http.Server{Addr: ":" + strconv.Itoa(rcv.applicationConfig.Port), Handler: http.HandlerFunc(
-		func(res http.ResponseWriter, req *http.Request) {
-			http.ServeFile(res, req, path.Join(rcv.applicationConfig.StatsDir, "index.html"))
-		},
-	)}
+	router := mux.NewRouter()
+
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("webserver/assets/"))))
+	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(rcv.applicationConfig.StatsDir))))
+
+	server := &http.Server{Addr: ":" + strconv.Itoa(rcv.applicationConfig.Port), Handler: router}
 
 	go func() {
 		if err := server.ListenAndServe(); err != nil {
