@@ -11,29 +11,34 @@
     <ul>
         {{ if . }}
             <li>Name: <b>{{ .Config.Name }}</b></li>
-            <li>Balance: <b>{{ if .Stats.Balance }}{{ .Stats.Balance }}
-                    {{else}}-{{ end }}</b></li>
-            <li>Equity: <b>{{ if .Stats.Equity }} {{ .Stats.Equity }}
-                    {{else}}-{{ end }}</b></li>
-            <li>Profit: <b>{{ if .Stats.Profit }} {{ .Stats.Profit }}
-                    {{else}}-{{ end }}</b></li>
-            <li>DayProfitMoney: <b>{{ if .Stats.DayProfitMoney }} {{ .Stats.DayProfitMoney }}
-                    {{else}}-{{ end }}</b>
-            </li>
-            <li>DayProfitPercent:<b>{{ if .Stats.DayProfitPercent }} {{ .Stats.DayProfitPercent }}
-                    {{else}}-{{ end }}</b></li>
-            <li>WeekProfitMoney: <b>{{ if .Stats.WeekProfitMoney }} {{ .Stats.WeekProfitMoney }}
-                    {{else}}-{{ end }}</b></li>
-            <li>WeekProfitPercent:<b>{{ if .Stats.WeekProfitPercent }} {{ .Stats.WeekProfitPercent }}
-                    {{else}}-{{ end }}</b></li>
-            <li>MonthProfitMoney:<b>{{ if .Stats.MonthProfitMoney }} {{ .Stats.MonthProfitMoney }}
-                    {{else}}-{{ end }}</b></li>
-            <li>MonthProfitPercent:<b>{{ if .Stats.MonthProfitPercent }} {{ .Stats.MonthProfitPercent }}
-                    {{else}}-{{ end }}</b></li>
-            <li>YearProfitMoney:<b>{{ if .Stats.YearProfitMoney }} {{ .Stats.YearProfitMoney }}
-                    {{else}}-{{ end }}</b></li>
-            <li>YearProfitPercent:<b>{{ if .Stats.YearProfitPercent }} {{ .Stats.YearProfitPercent }}
-                    {{else}}-{{ end }}</b></li>
+            <ul>
+                <li>Balance: <b>{{ if .Stats.Balance }}{{ .Stats.Balance }}
+                        {{else}}-{{ end }}</b></li>
+                <li>Equity: <b>{{ if .Stats.Equity }} {{ .Stats.Equity }}
+                        {{else}}-{{ end }}</b></li>
+                <li>Profit: <b>{{ if .Stats.Profit }} {{ .Stats.Profit }}
+                        {{else}}-{{ end }}</b></li>
+                <li>Drawdown: <b>{{ if .Stats.Drawdown }} {{ .Stats.Drawdown }}%
+                        {{else}}-{{ end }}</b></li>
+                <li>OverallDrawdown: <b>{{ if .Stats.OverallDrawdown }} {{ .Stats.OverallDrawdown }}%
+                        {{else}}-{{ end }}</b></li>
+                <li>DayProfitMoney: <b>{{ if .Stats.DayProfitMoney }} {{ .Stats.DayProfitMoney }}
+                        {{else}}-{{ end }}</b></li>
+                <li>DayProfitPercent:<b>{{ if .Stats.DayProfitPercent }} {{ .Stats.DayProfitPercent }}%
+                        {{else}}-{{ end }}</b></li>
+                <li>WeekProfitMoney: <b>{{ if .Stats.WeekProfitMoney }} {{ .Stats.WeekProfitMoney }}
+                        {{else}}-{{ end }}</b></li>
+                <li>WeekProfitPercent:<b>{{ if .Stats.WeekProfitPercent }} {{ .Stats.WeekProfitPercent }}%
+                        {{else}}-{{ end }}</b></li>
+                <li>MonthProfitMoney:<b>{{ if .Stats.MonthProfitMoney }} {{ .Stats.MonthProfitMoney }}
+                        {{else}}-{{ end }}</b></li>
+                <li>MonthProfitPercent:<b>{{ if .Stats.MonthProfitPercent }} {{ .Stats.MonthProfitPercent }}%
+                        {{else}}-{{ end }}</b></li>
+                <li>YearProfitMoney:<b>{{ if .Stats.YearProfitMoney }} {{ .Stats.YearProfitMoney }}
+                        {{else}}-{{ end }}</b></li>
+                <li>YearProfitPercent:<b>{{ if .Stats.YearProfitPercent }} {{ .Stats.YearProfitPercent }}%
+                        {{else}}-{{ end }}</b></li>
+            </ul>
         {{ end }}
     </ul>
 {{end}}

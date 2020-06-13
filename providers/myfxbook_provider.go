@@ -51,7 +51,27 @@ func (rcv *MyfxbookProvider) Get(accountConfig models.AccountConfig) models.Acco
 				if profit != nil {
 					accountStats.Profit = rcv.normalizeCurrency(*profit, accountConfig.CurrencyDivider)
 				}
+
+				deposits := rcv.deposits(s)
+				if deposits != nil {
+					accountStats.Deposits = rcv.normalizeCurrency(*deposits, accountConfig.CurrencyDivider)
+				}
+
+				withdrawals := rcv.withdrawals(s)
+				if withdrawals != nil {
+					accountStats.Withdrawals = rcv.normalizeCurrency(*withdrawals, accountConfig.CurrencyDivider)
+				}
 			})
+
+			drawdown := rcv.drawdown(accountStats.Balance, accountStats.Equity)
+			if drawdown != nil {
+				accountStats.Drawdown = drawdown
+			}
+
+			overallDrawdown := rcv.overallDrawdown(accountStats.Deposits, accountStats.Withdrawals, accountStats.Equity)
+			if overallDrawdown != nil {
+				accountStats.OverallDrawdown = overallDrawdown
+			}
 
 			r.HTMLDoc.Find("tr").Each(func(_ int, s *goquery.Selection) {
 				dayProfitMoney, dayProfitPercent, err := rcv.profitPeriod(s, "Today", "td")
@@ -157,6 +177,106 @@ func (rcv *MyfxbookProvider) profit(s *goquery.Selection) *float64 {
 	}
 	log.Println("Profit:", *result)
 	return result
+}
+
+func (rcv *MyfxbookProvider) deposits(s *goquery.Selection) *float64 {
+	rawValue := rcv.rawValue(s, "Deposits", "span.floatLeft", "span.floatNone")
+	if rawValue == nil {
+		return nil
+	}
+	//log.Println("Profit raw:", *rawValue)
+
+	result, err := rcv.numericValue(*rawValue)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	log.Println("Deposits:", *result)
+	return result
+}
+
+func (rcv *MyfxbookProvider) withdrawals(s *goquery.Selection) *float64 {
+	rawValue := rcv.rawValue(s, "Withdrawals", "span.floatLeft", "span.floatNone")
+	if rawValue == nil {
+		return nil
+	}
+	//log.Println("Profit raw:", *rawValue)
+
+	result, err := rcv.numericValue(*rawValue)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	log.Println("Withdrawals:", *result)
+	return result
+}
+
+func (rcv *MyfxbookProvider) drawdown(balance *float64, equity *float64) *float64 {
+	if balance != nil && equity != nil {
+		// balance -> 100%
+		// equity -> x
+		drawdown := (100 - (100 * *equity / *balance)) * -1.0
+
+		rounded := math.Round(drawdown*100) / 100
+		return &rounded
+	}
+	return nil
+}
+
+func (rcv *MyfxbookProvider) overallDrawdown(deposits *float64, withdrawals *float64, equity *float64) *float64 {
+	if deposits != nil && withdrawals != nil && equity != nil {
+		adjustedDeposit := *deposits - *withdrawals
+		if adjustedDeposit == 0 {
+			return nil
+		}
+
+		// deposit -> 100%
+		// equity -> x
+		drawdown := (100 - (100 * *equity / adjustedDeposit)) * -1.0
+
+		rounded := math.Round(drawdown*100) / 100
+		return &rounded
+	}
+	return nil
+}
+
+func (rcv *MyfxbookProvider) drawdown2(s *goquery.Selection, equity *float64) *float64 {
+	depositsRawValue := rcv.rawValue(s, "Deposits", "span.floatLeft", "span.floatNone")
+	if depositsRawValue == nil {
+		return nil
+	}
+	//log.Println("Profit raw:", *rawValue)
+
+	deposits, err := rcv.numericValue(*depositsRawValue)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	log.Println("Deposits:", *deposits)
+
+	withdrawalsRawValue := rcv.rawValue(s, "Withdrawals", "span.floatLeft", "span.floatNone")
+	if withdrawalsRawValue == nil {
+		return nil
+	}
+	//log.Println("Profit raw:", *rawValue)
+
+	withdrawals, err := rcv.numericValue(*withdrawalsRawValue)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	log.Println("Withdrawals:", *withdrawals)
+
+	//equity := rcv.equity(s)
+	if equity == nil {
+		return nil
+	}
+
+	adjustedDeposit := *deposits - *withdrawals
+	drawdown := 100 * *equity / adjustedDeposit
+
+	rounded := math.Round(drawdown*100) / 100
+	return &rounded
 }
 
 func (rcv *MyfxbookProvider) rawValue(s *goquery.Selection, nameMarker string, nameSelector string, valueSelector string) *string {

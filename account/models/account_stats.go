@@ -4,6 +4,10 @@ type AccountStats struct {
 	Balance            *float64 `json:"balance,omitempty"`
 	Equity             *float64 `json:"equity,omitempty"`
 	Profit             *float64 `json:"profit,omitempty"`
+	Deposits           *float64 `json:"deposits,omitempty"`
+	Withdrawals        *float64 `json:"withdrawals,omitempty"`
+	Drawdown           *float64 `json:"drawdown,omitempty"`
+	OverallDrawdown    *float64 `json:"overall_drawdown,omitempty"`
 	DayProfitMoney     *float64 `json:"day_profit_money,omitempty"`
 	DayProfitPercent   *float64 `json:"day_profit_percent,omitempty"`
 	WeekProfitMoney    *float64 `json:"week_profit_money,omitempty"`
