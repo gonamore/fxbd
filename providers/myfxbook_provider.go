@@ -25,6 +25,14 @@ func (rcv *MyfxbookProvider) Get(accountConfig models.AccountConfig) models.Acco
 	//wg.Add(1)
 	accountStats := models.AccountStats{}
 
+	var currencySymbol string
+	switch accountConfig.Currency {
+	case "USD":
+		currencySymbol = "$"
+	default:
+		currencySymbol = ""
+	}
+
 	//go geziyor.NewGeziyor(&geziyor.Options{
 	geziyor.NewGeziyor(&geziyor.Options{
 		StartURLs: []string{accountConfig.Location},
@@ -33,17 +41,17 @@ func (rcv *MyfxbookProvider) Get(accountConfig models.AccountConfig) models.Acco
 			//defer wg.Done()
 
 			r.HTMLDoc.Find("li").Each(func(_ int, s *goquery.Selection) {
-				balance := rcv.balance(s)
+				balance := rcv.balance(s, currencySymbol)
 				if balance != nil {
 					accountStats.Balance = rcv.normalizeCurrency(*balance, accountConfig.CurrencyDivider)
 				}
 
-				equity := rcv.equity(s)
+				equity := rcv.equity(s, currencySymbol)
 				if equity != nil {
 					accountStats.Equity = rcv.normalizeCurrency(*equity, accountConfig.CurrencyDivider)
 				}
 
-				profit := rcv.profit(s)
+				profit := rcv.profit(s, currencySymbol)
 				if profit != nil {
 					accountStats.Profit = rcv.normalizeCurrency(*profit, accountConfig.CurrencyDivider)
 				}
@@ -106,57 +114,132 @@ func (rcv *MyfxbookProvider) Get(accountConfig models.AccountConfig) models.Acco
 //	return nil
 //}
 
-func (rcv *MyfxbookProvider) balance(s *goquery.Selection) *float64 {
-	//name := s.Find("span.floatLeft").Text()
-	//marker := "Balance"
-	//if strings.Contains(name, marker) {
-	//	raw := s.Find("span.floatNone").Text()
-	//	log.Println(marker, raw)
-	//	value := strings.TrimLeft(strings.TrimSpace(raw), "$")
-	//	result, err := strconv.ParseFloat(value, 64)
-	//	if err != nil {
-	//		log.Fatal(err)
-	//	} else {
-	//		return &result
-	//	}
+func (rcv *MyfxbookProvider) balance(s *goquery.Selection, currencySymbol string) *float64 {
+	rawValue := rcv.rawValue(s, "Balance", "span.floatLeft", "span.floatNone")
+	if rawValue == nil {
+		log.Println("Balance not fetched")
+		return nil
+	}
+	log.Println("Balance raw:", *rawValue)
+
+	//trimmed := strings.TrimSpace(*rawValue)
+	//log.Println("Balance trimmed:", trimmed)
+	//
+	//regex, _ := regexp.Compile("[^\\-\\w.]")
+	//normalized := regex.ReplaceAllString(trimmed, "")
+	//log.Println("Balance normalized:", normalized)
+	//
+	//result, err := strconv.ParseFloat(normalized, 64)
+	//if err != nil {
+	//	log.Println(err)
+	//	return nil
 	//}
-	return rcv.moneyValue(s, "span.floatLeft", "span.floatNone", "Balance")
+	//log.Println("Balance parsed:", result)
+	//return &result
+
+	result, err := rcv.numericValue(*rawValue)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	log.Println("Balance parsed:", result)
+	return result
 }
 
-func (rcv *MyfxbookProvider) equity(s *goquery.Selection) *float64 {
-	//name := s.Find("span.floatLeft").Text()
-	//marker := "Equity"
-	//if strings.Contains(name, marker) {
-	//	raw := s.Find("span.floatNone").Text()
-	//	log.Println(marker, raw)
-	//	value := strings.TrimLeft(strings.TrimSpace(raw), "$")
-	//	result, err := strconv.ParseFloat(value, 64)
-	//	if err != nil {
-	//		log.Fatal(err)
-	//	} else {
-	//		return &result
-	//	}
-	//}
-	//return nil
-	return rcv.moneyValue(s, "span.floatLeft", "span.floatNone", "Equity")
+func (rcv *MyfxbookProvider) equity(s *goquery.Selection, currencySymbol string) *float64 {
+	rawValue := rcv.rawValue(s, "Equity", "span.floatLeft", "span.floatNone")
+	if rawValue == nil {
+		return nil
+	}
+	log.Println("Equity raw:", *rawValue)
+
+	trimmed := strings.TrimSpace(*rawValue)
+	log.Println("Equity trimmed:", trimmed)
+
+	index := strings.LastIndex(trimmed, " ")
+	if index == -1 {
+		log.Println("Equity has not expected value:", trimmed)
+		return nil
+	}
+	splitted := trimmed[index+1:]
+	//splitted := strings.Split(trimmed, " ")
+	log.Println("Equity splitted:", splitted)
+
+	regex, _ := regexp.Compile("[^\\-\\w.]")
+	normalized := regex.ReplaceAllString(splitted, "")
+	log.Println("Equity normalized:", normalized)
+
+	result, err := strconv.ParseFloat(normalized, 64)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	log.Println("Equity parsed:", result)
+	return &result
 }
 
-func (rcv *MyfxbookProvider) profit(s *goquery.Selection) *float64 {
-	return rcv.moneyValue(s, "span.floatLeft", "span.floatNone", "Profit")
+func (rcv *MyfxbookProvider) profit(s *goquery.Selection, currencySymbol string) *float64 {
+	rawValue := rcv.rawValue(s, "Profit", "span.floatLeft", "span.floatNone")
+	if rawValue == nil {
+		return nil
+	}
+	log.Println("Profit raw:", *rawValue)
+
+	trimmed := strings.TrimSpace(*rawValue)
+	log.Println("Profit trimmed:", trimmed)
+
+	regex, _ := regexp.Compile("[^\\-\\w.]")
+	normalized := regex.ReplaceAllString(trimmed, "")
+	log.Println("Profit normalized:", normalized)
+
+	result, err := strconv.ParseFloat(normalized, 64)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	log.Println("Profit parsed:", result)
+	return &result
 }
 
-func (rcv *MyfxbookProvider) moneyValue(s *goquery.Selection, nameSelector string, valueSelector string, nameMarker string) *float64 {
+func (rcv *MyfxbookProvider) rawValue(s *goquery.Selection, nameMarker string, nameSelector string, valueSelector string) *string {
+	name := s.Find(nameSelector).Text()
+	if strings.Contains(name, nameMarker) {
+		result := s.Find(valueSelector).Text()
+		//log.Println(nameMarker, result)
+		return &result
+	}
+	return nil
+}
+
+func (rcv *MyfxbookProvider) numericValue(rawValue string) (*float64, error) {
+	regex, _ := regexp.Compile("[^\\-\\w.]")
+	normalized := regex.ReplaceAllString(rawValue, "")
+	//log.Println("Normalized for numeric:", normalized)
+
+	result, err := strconv.ParseFloat(normalized, 64)
+	if err != nil {
+		return nil, err
+	}
+	//log.Println("Parsed for numeric:", result)
+	return &result, nil
+}
+
+func (rcv *MyfxbookProvider) moneyValue(s *goquery.Selection, currencySymbol string, nameSelector string, valueSelector string, nameMarker string) *float64 {
 	name := s.Find(nameSelector).Text()
 	if strings.Contains(name, nameMarker) {
 		rawValue := s.Find(valueSelector).Text()
 		log.Println(nameMarker, rawValue)
 
-		index := strings.LastIndex(rawValue, "$")
-		if index != -1 {
-			rawValue = rawValue[index+1:]
-		}
+		//regex, _ := regexp.Compile("[^\\w."+currencySymbol+"]")
+		regex, _ := regexp.Compile("[^\\w.]")
+		value := regex.ReplaceAllString(rawValue, "")
 
-		value := strings.TrimSpace(rawValue)
+		//index := strings.LastIndex(rawValue, "$")
+		//if index != -1 {
+		//	rawValue = rawValue[index+1:]
+		//}
+
+		//value := strings.TrimSpace(rawValue)
 		result, err := strconv.ParseFloat(value, 64)
 		if err != nil {
 			log.Println(err)

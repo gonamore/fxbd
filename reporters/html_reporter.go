@@ -53,11 +53,14 @@ func (rcv *HtmlReporter) Assemble() {
 	}
 
 	t, _ := template.ParseFiles("webserver/templates/index.html")
-	//err = t.Execute(os.Stdout, reportData)
 	err = t.Execute(myFile, reportData)
 	if err != nil {
 		log.Println("Cannot create report from template: ", err)
 	}
+	//err = t.Execute(os.Stdout, reportData)
+	//if err != nil {
+	//	log.Println("Cannot console report from template: ", err)
+	//}
 }
 
 func (rcv *HtmlReporter) readAccountStats(accountName string) (*accmodels.AccountStats, error) {
