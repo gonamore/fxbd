@@ -1,59 +1,252 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{{ .Title}}</title>
-    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <style type="text/css">
+        body {
+            background-color: #eee;
+        }
+
+        .container {
+            background-color: #ddd;
+            width: 31.33%;
+            min-width: 280px;
+            margin: 1%;
+            border: 1px solid darkseagreen;
+            padding: 3px;
+            color: #333;
+            font-family: Calibri, 'Times New Roman', Times, serif;
+            font-size: 14px;
+            float: left;
+            box-sizing: border-box;
+        }
+
+        .boxer {
+            display: table;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .boxer .box-row {
+            display: table-row;
+            border-bottom: 1px solid lightgrey;
+        }
+
+        .boxer .box {
+            display: table-cell;
+            text-align: left;
+            vertical-align: top;
+            padding: 2px;
+        }
+
+        .account-name {
+            background-color: aquamarine;
+            border: 1px solid darkseagreen;
+            font-weight: bold;
+            font-size: larger;
+            padding: 3px !important;
+        }
+
+        .first-col {
+        }
+
+        .second-col {
+            width: 66%;
+        }
+
+        .periods {
+            margin-top: 6px;
+            /*border-top: 1px solid darkseagreen;*/
+        }
+
+        .periods-title {
+            color: #777;
+        }
+
+        .three-col-first {
+
+        }
+
+        .three-col-second {
+            width: 33%;
+        }
+
+        .three-col-third {
+            width: 33%;
+        }
+
+        .three-col-value {
+            float: left;
+            padding-right: 2px;
+        }
+
+        .red {
+            color: #dd0000;
+        }
+
+        .green {
+            color: #009900;
+        }
+    </style>
 </head>
 <body>
-<h1>{{ .Title}}</h1>
-{{range .Accounts}}
-    <ul>
-        {{ if . }}
-            <li>Name: <b>{{ .Config.Name }}</b></li>
-            <ul>
-                <li>Balance: <b>{{ if .Stats.Balance }}{{ .Stats.Balance }}
-                        {{else}}-{{ end }}</b></li>
-                <li>Equity: <b>{{ if .Stats.Equity }} {{ .Stats.Equity }}
-                        {{else}}-{{ end }}</b></li>
-                <li>Profit: <b>{{ if .Stats.Profit }} {{ .Stats.Profit }}
-                        {{else}}-{{ end }}</b></li>
-                <li>Drawdown: <b>{{ if .Stats.Drawdown }} {{ .Stats.Drawdown }}%
-                        {{else}}-{{ end }}</b></li>
-                <li>OverallDrawdown: <b>{{ if .Stats.OverallDrawdown }} {{ .Stats.OverallDrawdown }}%
-                        {{else}}-{{ end }}</b></li>
-                <li>DayProfitMoney: <b>{{ if .Stats.DayProfitMoney }} {{ .Stats.DayProfitMoney }}
-                        {{else}}-{{ end }}</b></li>
-                <li>DayProfitPercent:<b>{{ if .Stats.DayProfitPercent }} {{ .Stats.DayProfitPercent }}%
-                        {{else}}-{{ end }}</b></li>
-                <li>WeekProfitMoney: <b>{{ if .Stats.WeekProfitMoney }} {{ .Stats.WeekProfitMoney }}
-                        {{else}}-{{ end }}</b></li>
-                <li>WeekProfitPercent:<b>{{ if .Stats.WeekProfitPercent }} {{ .Stats.WeekProfitPercent }}%
-                        {{else}}-{{ end }}</b></li>
-                <li>MonthProfitMoney:<b>{{ if .Stats.MonthProfitMoney }} {{ .Stats.MonthProfitMoney }}
-                        {{else}}-{{ end }}</b></li>
-                <li>MonthProfitPercent:<b>{{ if .Stats.MonthProfitPercent }} {{ .Stats.MonthProfitPercent }}%
-                        {{else}}-{{ end }}</b></li>
-                <li>YearProfitMoney:<b>{{ if .Stats.YearProfitMoney }} {{ .Stats.YearProfitMoney }}
-                        {{else}}-{{ end }}</b></li>
-                <li>YearProfitPercent:<b>{{ if .Stats.YearProfitPercent }} {{ .Stats.YearProfitPercent }}%
-                        {{else}}-{{ end }}</b></li>
 
-                <li>SymbolStats: {{ if .Stats.SymbolStats }}
-                        {{range .Stats.SymbolStats}}
-                            <ul>
-                            {{ if . }}
-                                <li>{{ .Name }}: Profit=<b>{{ .Profit }}</b>, ProfitPercent={{.ProfitPercent}}</li>
-                            {{ end }}
-                            </ul>
+{{range .Accounts}}
+    {{ if . }}
+        <div class="container">
+            <div class="boxer">
+                <div class="box-row">
+                    <div class="box account-name">
+                        {{ .Config.Name }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="boxer">
+                <div class="box-row">
+                    <div class="box first-col">Balance</div>
+                    <div class="box second-col">{{ if .Stats.Balance }}{{ .Stats.Balance }}{{else}}-{{ end }}</div>
+                </div>
+                <div class="box-row">
+                    <div class="box first-col">Equity</div>
+                    <div class="box second-col">{{ if .Stats.Equity }}{{ .Stats.Equity }}{{else}}-{{ end }}</div>
+                </div>
+                <div class="box-row">
+                    <div class="box first-col">Profit</div>
+                    <div class="box second-col {{ if gt (DerefFloat .Stats.Profit) 0.0 }}green{{else}}red{{end}}">
+                        {{ if .Stats.Profit }}
+                            {{ if gt (DerefFloat .Stats.Profit) 0.0 }}+{{end}}{{ .Stats.Profit }}
+                        {{else}}
+                            -
                         {{ end }}
-                    {{else}}
+                    </div>
+                </div>
+                <div class="box-row">
+                    <div class="box first-col">Drawdown</div>
+                    <div class="box second-col {{ if gt (DerefFloat .Stats.Drawdown) 0.0 }}green{{else}}red{{end}}">
+                        {{ if .Stats.Drawdown }}
+                            {{ if gt (DerefFloat .Stats.Drawdown) 0.0 }}+{{end}}{{ .Stats.Drawdown }} %
+                        {{else}}
+                            -
+                        {{ end }}
+                    </div>
+                </div>
+                <div class="box-row">
+                    <div class="box first-col">OverallDrawdown</div>
+                    <div class="box second-col {{ if gt (DerefFloat .Stats.OverallDrawdown) 0.0 }}green{{else}}red{{end}}">
+                        {{ if .Stats.OverallDrawdown }}
+                            {{ if gt (DerefFloat .Stats.OverallDrawdown) 0.0 }}+{{end}}{{ .Stats.OverallDrawdown }} %
+                        {{else}}
+                            -
+                        {{ end }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="boxer periods">
+                <div class="box-row periods-title">
+                    <div class="box three-col-first"></div>
+                    <div class="box three-col-second"><b>Current</b></div>
+                    <div class="box three-col-third"><b>Previous</b></div>
+                </div>
+                <div class="box-row">
+                    <div class="box three-col-first">Day</div>
+                    <div class="box three-col-second">
+                        {{ if .Stats.DayProfitMoney }}
+                            <div class="three-col-value {{ if gt (DerefFloat .Stats.DayProfitMoney) 0.0 }}green{{else}}red{{end}}">
+                                {{ if gt (DerefFloat .Stats.DayProfitMoney) 0.0 }}+{{end}}{{ .Stats.DayProfitMoney }}
+                            </div>
+                            {{ if .Stats.DayProfitPercent }}
+                                <div class="three-col-value">
+                                    ({{ if gt (DerefFloat .Stats.DayProfitPercent) 0.0 }}+{{end}}{{ .Stats.DayProfitPercent }}
+                                    %)
+                                </div>
+                            {{ end }}
+                        {{else}}
+                            -
+                        {{ end }}
+                    </div>
+                    <div class="box three-col-third">
                         -
+                    </div>
+                </div>
+                <div class="box-row">
+                    <div class="box three-col-first">Month</div>
+                    <div class="box three-col-second">
+                        {{ if .Stats.MonthProfitMoney }}
+                            <div class="three-col-value {{ if gt (DerefFloat .Stats.MonthProfitMoney) 0.0 }}green{{else}}red{{end}}">
+                                {{ if gt (DerefFloat .Stats.MonthProfitMoney) 0.0 }}+{{end}}{{ .Stats.MonthProfitMoney }}
+                            </div>
+                            {{ if .Stats.MonthProfitPercent }}
+                                <div class="three-col-value">
+                                    ({{ if gt (DerefFloat .Stats.MonthProfitPercent) 0.0 }}+{{end}}{{ .Stats.MonthProfitPercent }}
+                                    %)
+                                </div>
+                            {{ end }}
+                        {{else}}
+                            -
+                        {{ end }}
+                    </div>
+                    <div class="box three-col-third">
+                        -
+                    </div>
+                </div>
+                <div class="box-row">
+                    <div class="box three-col-first">Year</div>
+                    <div class="box three-col-second">
+                        {{ if .Stats.YearProfitMoney }}
+                            <div class="three-col-value {{ if gt (DerefFloat .Stats.YearProfitMoney) 0.0 }}green{{else}}red{{end}}">
+                                {{ if gt (DerefFloat .Stats.YearProfitMoney) 0.0 }}+{{end}}{{ .Stats.YearProfitMoney }}
+                            </div>
+                            {{ if .Stats.YearProfitPercent }}
+                                <div class="three-col-value">
+                                    ({{ if gt (DerefFloat .Stats.YearProfitPercent) 0.0 }}+{{end}}{{ .Stats.YearProfitPercent }}
+                                    %)
+                                </div>
+                            {{ end }}
+                        {{else}}
+                            -
+                        {{ end }}
+                    </div>
+                    <div class="box three-col-third">
+                        -
+                    </div>
+                </div>
+            </div>
+
+            {{ if .Stats.SymbolStats }}
+                <div class="boxer periods">
+                    <div class="box-row periods-title">
+                        <div class="box first-col"></div>
+                        <div class="box second-col"><b>Open Trades</b></div>
+                    </div>
+                    {{range .Stats.SymbolStats}}
+                        {{ if . }}
+                            <div class="box-row">
+                                <div class="box first-col">
+                                    {{ .Name }}
+                                </div>
+                                <div class="box second-col">
+                                    <div class="three-col-value {{ if gt (DerefFloat .Profit) 0.0 }}green{{else}}red{{end}}">
+                                        {{ if gt (DerefFloat .Profit) 0.0 }}+{{end}}{{ .Profit }}
+                                    </div>
+                                    {{ if .ProfitPercent }}
+                                        <div class="three-col-value">
+                                            ({{ if gt (DerefFloat .ProfitPercent) 0.0 }}+{{end}}{{ .ProfitPercent }}
+                                            %)
+                                        </div>
+                                    {{ end }}
+                                </div>
+                            </div>
+                        {{ end }}
                     {{ end }}
-                </li>
-            </ul>
-        {{ end }}
-    </ul>
+                </div>
+            {{end}}
+
+        </div>
+    {{end}}
 {{end}}
+
 </body>
 </html>

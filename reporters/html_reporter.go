@@ -53,7 +53,16 @@ func (rcv *HtmlReporter) Assemble() {
 		log.Println("Cannot create report file: ", err)
 	}
 
-	t, _ := template.ParseFiles("webserver/templates/index.html")
+	t := template.Must(template.New("index.html").Funcs(template.FuncMap{
+		"DerefFloat": func(number *float64) float64 {
+			if number != nil {
+				return *number
+			} else {
+				return 0
+			}
+		},
+	}).ParseFiles("webserver/templates/index.html"))
+
 	err = t.Execute(myFile, reportData)
 	if err != nil {
 		log.Println("Cannot create report from template: ", err)
