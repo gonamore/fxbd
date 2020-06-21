@@ -1,16 +1,13 @@
 package providers
 
 import (
-	"errors"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/geziyor/geziyor"
 	"github.com/geziyor/geziyor/client"
 	"github.com/geziyor/geziyor/middleware"
 	"github.com/gonamore/fxbd/account/models"
-	"io/ioutil"
 	"log"
 	"math"
-	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
@@ -483,55 +480,4 @@ func (rcv ProcessRequestHeadersAware) ProcessRequest(req *client.Request) {
 	req.Header.Add("sec-fetch-dest", "empty")
 	req.Header.Add("referer", "https://www.myfxbook.com/")
 	req.Header.Add("accept-language", "uk,en;q=0.9,en-GB;q=0.8,en-US;q=0.7")
-}
-
-//curl 'https://www.myfxbook.com/paging.html?pt=15&p=1&ts=20000&l=x&id=5923181'    \
-//	-H 'authority: www.myfxbook.com'    \
-//	-H 'accept: */*'    \
-//	-H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36 Edg/83.0.478.50'    \
-//	-H 'x-requested-with: XMLHttpRequest'    \
-//	-H 'sec-fetch-site: same-origin'    \
-//	-H 'sec-fetch-mode: cors'    \
-//	-H 'sec-fetch-dest: empty'    \
-//	-H 'referer: https://www.myfxbook.com/'    \
-//	-H 'accept-language: uk,en;q=0.9,en-GB;q=0.8,en-US;q=0.7'    \
-//	--compressed
-func (rcv *MyfxbookProvider) fetchOpenTradesForPage(page int, accountId string) (*string, error) {
-	httpClient := &http.Client{}
-	req, err := http.NewRequest("GET", "https://www.myfxbook.com/paging.html?pt=15&p="+string(page)+"&ts=20000&l=x&id="+accountId, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("authority", "www.myfxbook.com")
-	req.Header.Add("accept", "*/*")
-	req.Header.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36 Edg/83.0.478.50")
-	req.Header.Add("x-requested-with", "XMLHttpRequest")
-	req.Header.Add("sec-fetch-site", "same-origin")
-	req.Header.Add("sec-fetch-mode", "cors")
-	req.Header.Add("sec-fetch-dest", "empty")
-	req.Header.Add("referer", "https://www.myfxbook.com/")
-	req.Header.Add("accept-language", "uk,en;q=0.9,en-GB;q=0.8,en-US;q=0.7")
-
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.StatusCode != 200 {
-		return nil, errors.New("not 200")
-	}
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	result := string(body)
-	return &result, nil
-}
-
-func (rcv *MyfxbookProvider) fetchSymbolStatsForPage() ([]models.SymbolStats, error) {
-
-	return nil, nil
 }
