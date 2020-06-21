@@ -38,6 +38,19 @@
                         {{else}}-{{ end }}</b></li>
                 <li>YearProfitPercent:<b>{{ if .Stats.YearProfitPercent }} {{ .Stats.YearProfitPercent }}%
                         {{else}}-{{ end }}</b></li>
+
+                <li>SymbolStats: {{ if .Stats.SymbolStats }}
+                        {{range .Stats.SymbolStats}}
+                            <ul>
+                            {{ if . }}
+                                <li>{{ .Name }}: Profit=<b>{{ .Profit }}</b>, ProfitPercent={{.ProfitPercent}}</li>
+                            {{ end }}
+                            </ul>
+                        {{ end }}
+                    {{else}}
+                        -
+                    {{ end }}
+                </li>
             </ul>
         {{ end }}
     </ul>

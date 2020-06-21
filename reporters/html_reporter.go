@@ -36,9 +36,10 @@ func (rcv *HtmlReporter) Assemble() {
 	for _, accountConfig := range rcv.applicationConfig.Accounts {
 		accountStats, err := rcv.readAccountStats(accountConfig.Name)
 		if err != nil {
-			log.Fatal("Cannot read account stats", err)
+			log.Println("Cannot read account stats: ", err)
+		} else {
+			accountData = append(accountData, AccountData{Config: accountConfig, Stats: *accountStats})
 		}
-		accountData = append(accountData, AccountData{Config: accountConfig, Stats: *accountStats})
 	}
 
 	reportData := ReportData{
