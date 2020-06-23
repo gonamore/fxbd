@@ -379,15 +379,23 @@ func (rcv *MyfxbookProvider) symbolStats(accountConfig models.AccountConfig, doc
 		ParseFunc: func(g *geziyor.Geziyor, r *client.Response) {
 
 			colNameIndex := -1
+			colActionIndex := -1
+			colLotsIndex := -1
 			colProfitIndex := -1
 			colProfitPercentIndex := -1
 
 			r.HTMLDoc.Find("#openTrades tr").Each(func(rowIndex int, row *goquery.Selection) {
 				if rowIndex == 0 {
 					row.Find("th").Each(func(colIndex int, col *goquery.Selection) {
-						colTitle := col.Text()
+						colTitle := strings.TrimSpace(col.Text())
 						if colTitle == "Symbol" {
 							colNameIndex = colIndex + 1 // fix brokerTime
+						}
+						if colTitle == "Action" {
+							colActionIndex = colIndex + 1 // fix brokerTime
+						}
+						if colTitle == "Lots" {
+							colLotsIndex = colIndex + 1 // fix brokerTime
 						}
 						if strings.Index(colTitle, "Profit") != -1 {
 							colProfitIndex = colIndex + 1 // fix brokerTime
@@ -405,6 +413,12 @@ func (rcv *MyfxbookProvider) symbolStats(accountConfig models.AccountConfig, doc
 					name := ""
 					profit := 0.0
 					profitPercent := 0.0
+					isBuyRow := false
+					buyOrdersCount := 0
+					buyOrdersLot := 0.0
+					sellOrdersCount := 0
+					sellOrdersLot := 0.0
+
 					row.Find("td").Each(func(colIndex int, col *goquery.Selection) {
 						if colIndex == colNameIndex && !errOccurred {
 							value := strings.TrimSpace(col.Text())
@@ -414,6 +428,32 @@ func (rcv *MyfxbookProvider) symbolStats(accountConfig models.AccountConfig, doc
 							} else {
 								name = value
 								//log.Println("Symbol.Name", name)
+							}
+						}
+						if colIndex == colActionIndex && !errOccurred {
+							value := strings.TrimSpace(col.Text())
+							if value == "" {
+								log.Println("Error on row", rowIndex, "col", colIndex, ":", "Cannot get", "Symbol.Action")
+								errOccurred = true
+							} else if value == "Buy" {
+								buyOrdersCount++
+								isBuyRow = true
+							} else if value == "Sell" {
+								sellOrdersCount++
+								isBuyRow = false
+							}
+						}
+						if colIndex == colLotsIndex && !errOccurred {
+							value, err := rcv.numericValue(col.Text())
+							if err != nil {
+								log.Println("Error on row", rowIndex, "col", colIndex, ":", "Cannot get", "Symbol.Lots", err)
+								errOccurred = true
+							} else {
+								if isBuyRow {
+									buyOrdersLot = *value
+								} else {
+									sellOrdersLot = *value
+								}
 							}
 						}
 						if colIndex == colProfitIndex && !errOccurred {
@@ -441,7 +481,17 @@ func (rcv *MyfxbookProvider) symbolStats(accountConfig models.AccountConfig, doc
 					if !errOccurred {
 						normalizedProfit := rcv.normalizeCurrency(profit, accountConfig.CurrencyDivider)
 						roundedProfitPercent := rcv.round(profitPercent)
-						symbolStats := models.SymbolStats{Name: name, Profit: *normalizedProfit, ProfitPercent: *roundedProfitPercent}
+						roundedBuyOrdersLot := rcv.round(buyOrdersLot)
+						roundedSellOrdersLot := rcv.round(sellOrdersLot)
+						symbolStats := models.SymbolStats{
+							Name:            name,
+							Profit:          *normalizedProfit,
+							ProfitPercent:   *roundedProfitPercent,
+							BuyOrdersCount:  buyOrdersCount,
+							BuyOrdersLot:    *roundedBuyOrdersLot,
+							SellOrdersCount: sellOrdersCount,
+							SellOrdersLot:   *roundedSellOrdersLot,
+						}
 						log.Println("Symbol", symbolStats)
 
 						symbolExists := false
@@ -450,6 +500,10 @@ func (rcv *MyfxbookProvider) symbolStats(accountConfig models.AccountConfig, doc
 								symbolExists = true
 								overallSymbolStats[i].Profit = *rcv.round(st.Profit + symbolStats.Profit)
 								overallSymbolStats[i].ProfitPercent = *rcv.round(st.ProfitPercent + symbolStats.ProfitPercent)
+								overallSymbolStats[i].BuyOrdersCount = st.BuyOrdersCount + symbolStats.BuyOrdersCount
+								overallSymbolStats[i].BuyOrdersLot = *rcv.round(st.BuyOrdersLot + symbolStats.BuyOrdersLot)
+								overallSymbolStats[i].SellOrdersCount = st.SellOrdersCount + symbolStats.SellOrdersCount
+								overallSymbolStats[i].SellOrdersLot = *rcv.round(st.SellOrdersLot + symbolStats.SellOrdersLot)
 								break
 							}
 						}

@@ -74,6 +74,7 @@
 
         .three-col-third {
             width: 33%;
+            white-space: nowrap;
         }
 
         .three-col-value {
@@ -219,16 +220,17 @@
             {{ if .Stats.SymbolStats }}
                 <div class="boxer periods">
                     <div class="box-row periods-title">
-                        <div class="box first-col"></div>
-                        <div class="box second-col"><b>Open Trades</b></div>
+                        <div class="box three-col-first"></div>
+                        <div class="box three-col-second"><b>Open Trades</b></div>
+                        <div class="box three-col-third"><b>Buy/Sell Lots</b></div>
                     </div>
                     {{range .Stats.SymbolStats}}
                         {{ if . }}
                             <div class="box-row">
-                                <div class="box first-col">
+                                <div class="box three-col-first">
                                     {{ .Name }}
                                 </div>
-                                <div class="box second-col">
+                                <div class="box three-col-second">
                                     <div class="three-col-value {{ if gt (DerefFloat .Profit) 0.0 }}green{{else}}red{{end}}">
                                         {{ if gt (DerefFloat .Profit) 0.0 }}+{{end}}{{ .Profit }}
                                     </div>
@@ -238,6 +240,11 @@
                                             %)
                                         </div>
                                     {{ end }}
+                                </div>
+                                <div class="box three-col-third">
+                                    {{ if .BuyOrdersCount }}{{ .BuyOrdersCount }} ({{ .BuyOrdersLot }}){{else}}-{{ end }}
+                                    /
+                                    {{ if .SellOrdersCount }}{{ .SellOrdersCount }} ({{ .SellOrdersLot }}){{else}}-{{ end }}
                                 </div>
                             </div>
                         {{ end }}
