@@ -334,16 +334,16 @@ func (rcv *MyfxbookProvider) profitPeriod(s *goquery.Selection, nameMarker strin
 
 		profitPercentSelection := selection.Next()
 		profitPercentText := strings.TrimSpace(profitPercentSelection.First().Text())
-		log.Println(profitPercentText)
-		profitPercentSplitted := strings.Split(profitPercentText, " ")
+		//log.Println("Profit percent for period", nameMarker, "is:", profitPercentText)
+		profitPercentSplitted := strings.SplitN(profitPercentText, " ", 2)
 		if len(profitPercentSplitted) != 2 {
 			return nil, nil, errors.New("Profit percent for " + nameMarker + " is invalid: " + profitPercentText)
 		}
 
 		profitMoneySelection := profitPercentSelection.Next()
 		profitMoneyText := strings.TrimSpace(profitMoneySelection.First().Text())
-		log.Println(profitMoneyText)
-		profitMoneySplitted := strings.Split(profitMoneyText, " ")
+		//log.Println("Profit money for period", nameMarker, "is:", profitMoneyText)
+		profitMoneySplitted := strings.SplitN(profitMoneyText, " ", 2)
 		if len(profitMoneySplitted) != 2 {
 			return nil, nil, errors.New("Profit money for " + nameMarker + " is invalid: " + profitMoneyText)
 		}

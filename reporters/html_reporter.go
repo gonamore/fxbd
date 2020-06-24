@@ -61,6 +61,15 @@ func (rcv *HtmlReporter) Assemble() {
 				return 0
 			}
 		},
+		"ColorOf": func(number *float64) string {
+			if number == nil || *number == 0.0 {
+				return ""
+			} else if *number > 0 {
+				return "green"
+			} else {
+				return "red"
+			}
+		},
 	}).ParseFiles("webserver/templates/index.html"))
 
 	err = t.Execute(myFile, reportData)
