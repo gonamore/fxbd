@@ -1,6 +1,7 @@
 package providers
 
 import (
+	"errors"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/geziyor/geziyor"
 	"github.com/geziyor/geziyor/client"
@@ -328,19 +329,35 @@ func (rcv *MyfxbookProvider) round(value float64) *float64 {
 func (rcv *MyfxbookProvider) profitPeriod(s *goquery.Selection, nameMarker string, nameSelector string) (*float64, *float64, error) {
 	selection := s.Find(nameSelector)
 	name := selection.Text()
-	if strings.Contains(name, nameMarker) {
+	if strings.HasPrefix(name, nameMarker) {
 		//log.Println(name)
 
-		profitMoneyAsString := selection.Next().Next().Find("span").First().Text()
+		profitPercentSelection := selection.Next()
+		profitPercentText := strings.TrimSpace(profitPercentSelection.First().Text())
+		log.Println(profitPercentText)
+		profitPercentSplitted := strings.Split(profitPercentText, " ")
+		if len(profitPercentSplitted) != 2 {
+			return nil, nil, errors.New("Profit percent for " + nameMarker + " is invalid: " + profitPercentText)
+		}
+
+		profitMoneySelection := profitPercentSelection.Next()
+		profitMoneyText := strings.TrimSpace(profitMoneySelection.First().Text())
+		log.Println(profitMoneyText)
+		profitMoneySplitted := strings.Split(profitMoneyText, " ")
+		if len(profitMoneySplitted) != 2 {
+			return nil, nil, errors.New("Profit money for " + nameMarker + " is invalid: " + profitMoneyText)
+		}
+
+		//profitMoneyAsString := selection.Next().Next().Find("span").First().Text()
 		//log.Println(profitMoneyAsString)
-		profitMoney, err := rcv.numericValue(profitMoneyAsString)
+		profitMoney, err := rcv.numericValue(profitMoneySplitted[0])
 		if err != nil {
 			return nil, nil, err
 		}
 
-		profitPercentAsString := selection.Next().Find("span").First().Text()
-		//log.Println(profitPercentAsString)
-		profitPercent, err := rcv.numericValue(profitPercentAsString)
+		//profitPercentAsString := selection.Next().Find("span").First().Text()
+		//log.Println(profitPercentText)
+		profitPercent, err := rcv.numericValue(profitPercentSplitted[0])
 		if err != nil {
 			return nil, nil, err
 		}
@@ -492,7 +509,7 @@ func (rcv *MyfxbookProvider) symbolStats(accountConfig models.AccountConfig, doc
 							SellOrdersCount: sellOrdersCount,
 							SellOrdersLot:   *roundedSellOrdersLot,
 						}
-						log.Println("Symbol", symbolStats)
+						//log.Println("Symbol", symbolStats)
 
 						symbolExists := false
 						for i, st := range overallSymbolStats {
