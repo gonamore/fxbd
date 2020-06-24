@@ -157,12 +157,11 @@
                     <div class="box three-col-second">
                         {{ if .Stats.DayProfitMoney }}
                             <div class="three-col-value {{ ColorOf .Stats.DayProfitMoney }}">
-                                {{ if gt (DerefFloat .Stats.DayProfitMoney) 0.0 }}+{{end}}{{ .Stats.DayProfitMoney }}
+                                {{ ValueOf .Stats.DayProfitMoney }}
                             </div>
                             {{ if .Stats.DayProfitPercent }}
                                 <div class="three-col-value">
-                                    ({{ if gt (DerefFloat .Stats.DayProfitPercent) 0.0 }}+{{end}}{{ .Stats.DayProfitPercent }}
-                                    %)
+                                    ({{ ValueOf .Stats.DayProfitPercent }} %)
                                 </div>
                             {{ end }}
                         {{else}}
@@ -170,7 +169,18 @@
                         {{ end }}
                     </div>
                     <div class="box three-col-third">
-                        -
+                        {{ if .Stats.DayProfitMoneyPrevious }}
+                            <div class="three-col-value {{ ColorOf .Stats.DayProfitMoneyPrevious }}">
+                                {{ ValueOf .Stats.DayProfitMoneyPrevious }}
+                            </div>
+                            {{ if .Stats.DayProfitPercentPrevious }}
+                                <div class="three-col-value">
+                                    ({{ ValueOf .Stats.DayProfitPercentPrevious }} %)
+                                </div>
+                            {{ end }}
+                        {{else}}
+                            -
+                        {{ end }}
                     </div>
                 </div>
                 <div class="box-row">
@@ -178,12 +188,11 @@
                     <div class="box three-col-second">
                         {{ if .Stats.MonthProfitMoney }}
                             <div class="three-col-value {{ ColorOf .Stats.MonthProfitMoney }}">
-                                {{ if gt (DerefFloat .Stats.MonthProfitMoney) 0.0 }}+{{end}}{{ .Stats.MonthProfitMoney }}
+                                {{ ValueOf .Stats.MonthProfitMoney }}
                             </div>
                             {{ if .Stats.MonthProfitPercent }}
                                 <div class="three-col-value">
-                                    ({{ if gt (DerefFloat .Stats.MonthProfitPercent) 0.0 }}+{{end}}{{ .Stats.MonthProfitPercent }}
-                                    %)
+                                    ({{ ValueOf .Stats.MonthProfitPercent }} %)
                                 </div>
                             {{ end }}
                         {{else}}
@@ -191,7 +200,18 @@
                         {{ end }}
                     </div>
                     <div class="box three-col-third">
-                        -
+                        {{ if .Stats.MonthProfitMoneyPrevious }}
+                            <div class="three-col-value {{ ColorOf .Stats.MonthProfitMoneyPrevious }}">
+                                {{ ValueOf .Stats.MonthProfitMoneyPrevious }}
+                            </div>
+                            {{ if .Stats.MonthProfitPercentPrevious }}
+                                <div class="three-col-value">
+                                    ({{ ValueOf .Stats.MonthProfitPercentPrevious }} %)
+                                </div>
+                            {{ end }}
+                        {{else}}
+                            -
+                        {{ end }}
                     </div>
                 </div>
                 <div class="box-row">
@@ -199,12 +219,11 @@
                     <div class="box three-col-second">
                         {{ if .Stats.YearProfitMoney }}
                             <div class="three-col-value {{ ColorOf .Stats.YearProfitMoney }}">
-                                {{ if gt (DerefFloat .Stats.YearProfitMoney) 0.0 }}+{{end}}{{ .Stats.YearProfitMoney }}
+                                {{ ValueOf .Stats.YearProfitMoney }}
                             </div>
                             {{ if .Stats.YearProfitPercent }}
                                 <div class="three-col-value">
-                                    ({{ if gt (DerefFloat .Stats.YearProfitPercent) 0.0 }}+{{end}}{{ .Stats.YearProfitPercent }}
-                                    %)
+                                    ({{ ValueOf .Stats.YearProfitPercent }} %)
                                 </div>
                             {{ end }}
                         {{else}}
@@ -212,7 +231,18 @@
                         {{ end }}
                     </div>
                     <div class="box three-col-third">
-                        -
+                        {{ if .Stats.YearProfitMoneyPrevious }}
+                            <div class="three-col-value {{ ColorOf .Stats.YearProfitMoneyPrevious }}">
+                                {{ ValueOf .Stats.YearProfitMoneyPrevious }}
+                            </div>
+                            {{ if .Stats.YearProfitPercentPrevious }}
+                                <div class="three-col-value">
+                                    ({{ ValueOf .Stats.YearProfitPercentPrevious }} %)
+                                </div>
+                            {{ end }}
+                        {{else}}
+                            -
+                        {{ end }}
                     </div>
                 </div>
             </div>
@@ -222,7 +252,7 @@
                     <div class="box-row periods-title">
                         <div class="box three-col-first"></div>
                         <div class="box three-col-second"><b>Open Trades</b></div>
-                        <div class="box three-col-third"><b>Buy/Sell Lots</b></div>
+                        <div class="box three-col-third"><b>Buy/Sell (Lots)</b></div>
                     </div>
                     {{range .Stats.SymbolStats}}
                         {{ if . }}

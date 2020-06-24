@@ -76,44 +76,60 @@ func (rcv *MyfxbookProvider) Get(accountConfig models.AccountConfig) models.Acco
 			}
 
 			r.HTMLDoc.Find("tr").Each(func(_ int, s *goquery.Selection) {
-				dayProfitMoney, dayProfitPercent, err := rcv.profitPeriod(s, "Today", "td")
+				dayProfitMoney, dayProfitMoneyPrevious, dayProfitPercent, dayProfitPercentPrevious, err := rcv.profitPeriod(s, "Today", "td")
 				if err != nil {
 					log.Println("Cannot fetch day profit", err)
-				} else if dayProfitMoney != nil && dayProfitPercent != nil {
-					//log.Println(*dayProfitMoney)
-					//log.Println(*dayProfitPercent)
-					accountStats.DayProfitMoney = rcv.normalizeCurrency(*dayProfitMoney, accountConfig.CurrencyDivider)
-					accountStats.DayProfitPercent = dayProfitPercent
+				} else {
+					if dayProfitMoney != nil && dayProfitPercent != nil {
+						accountStats.DayProfitMoney = rcv.normalizeCurrency(*dayProfitMoney, accountConfig.CurrencyDivider)
+						accountStats.DayProfitPercent = dayProfitPercent
+					}
+					if dayProfitMoneyPrevious != nil && dayProfitPercentPrevious != nil {
+						accountStats.DayProfitMoneyPrevious = rcv.normalizeCurrency(*dayProfitMoneyPrevious, accountConfig.CurrencyDivider)
+						accountStats.DayProfitPercentPrevious = dayProfitPercentPrevious
+					}
 				}
 
-				weekProfitMoney, weekProfitPercent, err := rcv.profitPeriod(s, "This Week", "td")
+				weekProfitMoney, weekProfitMoneyPrevious, weekProfitPercent, weekProfitPercentPrevious, err := rcv.profitPeriod(s, "This Week", "td")
 				if err != nil {
 					log.Println("Cannot fetch week profit", err)
-				} else if weekProfitMoney != nil && weekProfitPercent != nil {
-					//log.Println(*weekProfitMoney)
-					//log.Println(*weekProfitPercent)
-					accountStats.WeekProfitMoney = rcv.normalizeCurrency(*weekProfitMoney, accountConfig.CurrencyDivider)
-					accountStats.WeekProfitPercent = weekProfitPercent
+				} else {
+					if weekProfitMoney != nil && weekProfitPercent != nil {
+						accountStats.WeekProfitMoney = rcv.normalizeCurrency(*weekProfitMoney, accountConfig.CurrencyDivider)
+						accountStats.WeekProfitPercent = weekProfitPercent
+					}
+					if weekProfitMoneyPrevious != nil && weekProfitPercentPrevious != nil {
+						accountStats.WeekProfitMoneyPrevious = rcv.normalizeCurrency(*weekProfitMoneyPrevious, accountConfig.CurrencyDivider)
+						accountStats.WeekProfitPercentPrevious = weekProfitPercentPrevious
+					}
 				}
 
-				monthProfitMoney, monthProfitPercent, err := rcv.profitPeriod(s, "This Month", "td")
+				monthProfitMoney, monthProfitMoneyPrevious, monthProfitPercent, monthProfitPercentPrevious, err := rcv.profitPeriod(s, "This Month", "td")
 				if err != nil {
 					log.Println("Cannot fetch month profit", err)
-				} else if monthProfitMoney != nil && monthProfitPercent != nil {
-					//log.Println(*monthProfitMoney)
-					//log.Println(*monthProfitPercent)
-					accountStats.MonthProfitMoney = rcv.normalizeCurrency(*monthProfitMoney, accountConfig.CurrencyDivider)
-					accountStats.MonthProfitPercent = monthProfitPercent
+				} else {
+					if monthProfitMoney != nil && monthProfitPercent != nil {
+						accountStats.MonthProfitMoney = rcv.normalizeCurrency(*monthProfitMoney, accountConfig.CurrencyDivider)
+						accountStats.MonthProfitPercent = monthProfitPercent
+					}
+					if monthProfitMoneyPrevious != nil && monthProfitPercentPrevious != nil {
+						accountStats.MonthProfitMoneyPrevious = rcv.normalizeCurrency(*monthProfitMoneyPrevious, accountConfig.CurrencyDivider)
+						accountStats.MonthProfitPercentPrevious = monthProfitPercentPrevious
+					}
 				}
 
-				yearProfitMoney, yearProfitPercent, err := rcv.profitPeriod(s, "This Year", "td")
+				yearProfitMoney, yearProfitMoneyPrevious, yearProfitPercent, yearProfitPercentPrevious, err := rcv.profitPeriod(s, "This Year", "td")
 				if err != nil {
 					log.Println("Cannot fetch year profit", err)
-				} else if yearProfitMoney != nil && yearProfitPercent != nil {
-					//log.Println(*yearProfitMoney)
-					//log.Println(*yearProfitPercent)
-					accountStats.YearProfitMoney = rcv.normalizeCurrency(*yearProfitMoney, accountConfig.CurrencyDivider)
-					accountStats.YearProfitPercent = yearProfitPercent
+				} else {
+					if yearProfitMoney != nil {
+						accountStats.YearProfitMoney = rcv.normalizeCurrency(*yearProfitMoney, accountConfig.CurrencyDivider)
+						accountStats.YearProfitPercent = yearProfitPercent
+					}
+					if yearProfitMoneyPrevious != nil {
+						accountStats.YearProfitMoneyPrevious = rcv.normalizeCurrency(*yearProfitMoneyPrevious, accountConfig.CurrencyDivider)
+						accountStats.YearProfitPercentPrevious = yearProfitPercentPrevious
+					}
 				}
 			})
 
@@ -301,7 +317,7 @@ func (rcv *MyfxbookProvider) numericValue(rawValue string) (*float64, error) {
 	normalized := regex.ReplaceAllString(rawValue, "")
 	//log.Println("Normalized for numeric:", normalized)
 
-	if normalized == "" {
+	if normalized == "" || normalized == "-" {
 		return nil, nil
 	}
 
@@ -326,7 +342,7 @@ func (rcv *MyfxbookProvider) round(value float64) *float64 {
 	return &rounded
 }
 
-func (rcv *MyfxbookProvider) profitPeriod(s *goquery.Selection, nameMarker string, nameSelector string) (*float64, *float64, error) {
+func (rcv *MyfxbookProvider) profitPeriod(s *goquery.Selection, nameMarker string, nameSelector string) (*float64, *float64, *float64, *float64, error) {
 	selection := s.Find(nameSelector)
 	name := selection.Text()
 	if strings.HasPrefix(name, nameMarker) {
@@ -337,7 +353,7 @@ func (rcv *MyfxbookProvider) profitPeriod(s *goquery.Selection, nameMarker strin
 		//log.Println("Profit percent for period", nameMarker, "is:", profitPercentText)
 		profitPercentSplitted := strings.SplitN(profitPercentText, " ", 2)
 		if len(profitPercentSplitted) != 2 {
-			return nil, nil, errors.New("Profit percent for " + nameMarker + " is invalid: " + profitPercentText)
+			return nil, nil, nil, nil, errors.New("Profit percent for " + nameMarker + " is invalid: " + profitPercentText)
 		}
 
 		profitMoneySelection := profitPercentSelection.Next()
@@ -345,26 +361,51 @@ func (rcv *MyfxbookProvider) profitPeriod(s *goquery.Selection, nameMarker strin
 		//log.Println("Profit money for period", nameMarker, "is:", profitMoneyText)
 		profitMoneySplitted := strings.SplitN(profitMoneyText, " ", 2)
 		if len(profitMoneySplitted) != 2 {
-			return nil, nil, errors.New("Profit money for " + nameMarker + " is invalid: " + profitMoneyText)
+			return nil, nil, nil, nil, errors.New("Profit money for " + nameMarker + " is invalid: " + profitMoneyText)
 		}
 
 		//profitMoneyAsString := selection.Next().Next().Find("span").First().Text()
 		//log.Println(profitMoneyAsString)
 		profitMoney, err := rcv.numericValue(profitMoneySplitted[0])
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, nil, nil, err
+		}
+
+		profitMoneyDiff, err := rcv.numericValue(profitMoneySplitted[1])
+		if err != nil {
+			return nil, nil, nil, nil, err
 		}
 
 		//profitPercentAsString := selection.Next().Find("span").First().Text()
 		//log.Println(profitPercentText)
 		profitPercent, err := rcv.numericValue(profitPercentSplitted[0])
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, nil, nil, err
 		}
 
-		return profitMoney, profitPercent, nil
+		profitPercentDiff, err := rcv.numericValue(profitPercentSplitted[1])
+		if err != nil {
+			return nil, nil, nil, nil, err
+		}
+
+		// curr - prev = diff
+		// prev = curr - diff
+		var profitMoneyPrevious *float64
+		if profitMoney != nil && profitMoneyDiff != nil {
+			value := *profitMoney - *profitMoneyDiff
+			profitMoneyPrevious = &value
+		}
+
+		var profitPercentPrevious *float64
+		if profitPercent != nil && profitPercentDiff != nil {
+			value := *profitPercent - *profitPercentDiff
+			profitPercentPrevious = &value
+		}
+
+		return profitMoney, profitMoneyPrevious, profitPercent, profitPercentPrevious, nil
 	}
-	return nil, nil, nil
+	//return nil, nil, nil, nil, errors.New("Empty profit money for " + nameMarker)
+	return nil, nil, nil, nil, nil
 }
 
 func (rcv *MyfxbookProvider) symbolStats(accountConfig models.AccountConfig, doc *goquery.Document) []models.SymbolStats {

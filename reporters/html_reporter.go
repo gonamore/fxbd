@@ -2,6 +2,7 @@ package reporters
 
 import (
 	"encoding/json"
+	"fmt"
 	accmodels "github.com/gonamore/fxbd/account/models"
 	cfgmodels "github.com/gonamore/fxbd/config/models"
 	"html/template"
@@ -68,6 +69,15 @@ func (rcv *HtmlReporter) Assemble() {
 				return "green"
 			} else {
 				return "red"
+			}
+		},
+		"ValueOf": func(number *float64) string {
+			if *number == 0.0 {
+				return "0"
+			} else if *number > 0 {
+				return "+" + fmt.Sprintf("%.2f", *number)
+			} else {
+				return fmt.Sprintf("%.2f", *number)
 			}
 		},
 	}).ParseFiles("webserver/templates/index.html"))
