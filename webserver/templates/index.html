@@ -39,12 +39,29 @@
             padding: 2px;
         }
 
+        .boxer-separator {
+            height: 3px;
+        }
+
         .account-name {
             background-color: aquamarine;
             border: 1px solid darkseagreen;
             font-weight: bold;
             font-size: larger;
             padding: 3px !important;
+        }
+
+        .update-time {
+            background-color: #d1d1d1;
+            border: 1px solid darkseagreen;
+            font-size: smaller;
+            font-style: italic;
+            color: #777;
+        }
+
+        .update-time span {
+            text-align: right;
+            float: right;
         }
 
         .first-col {
@@ -104,6 +121,8 @@
                     </div>
                 </div>
             </div>
+
+            <div class="boxer-separator"></div>
 
             <div class="boxer">
                 <div class="box-row">
@@ -282,6 +301,15 @@
                 </div>
             {{end}}
 
+            <div class="boxer-separator"></div>
+
+            <div class="boxer">
+                <div class="box-row">
+                    <div class="box update-time">
+                        <span>Last updated: {{ .Stats.UpdateTime }}</span>
+                    </div>
+                </div>
+            </div>
         </div>
     {{end}}
 {{end}}

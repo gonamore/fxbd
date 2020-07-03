@@ -63,6 +63,11 @@ func (rcv *MyfxbookProvider) Get(accountConfig models.AccountConfig) models.Acco
 				if withdrawals != nil {
 					accountStats.Withdrawals = rcv.normalizeCurrency(*withdrawals, accountConfig.CurrencyDivider)
 				}
+
+				updateTime := rcv.updateTime(s)
+				if updateTime != nil {
+					accountStats.UpdateTime = updateTime
+				}
 			})
 
 			drawdown := rcv.drawdown(accountStats.Balance, accountStats.Equity)
@@ -232,6 +237,15 @@ func (rcv *MyfxbookProvider) withdrawals(s *goquery.Selection) *float64 {
 	}
 	log.Println("Withdrawals:", *result)
 	return result
+}
+
+func (rcv *MyfxbookProvider) updateTime(s *goquery.Selection) *string {
+	rawValue := rcv.rawValue(s, "Updated", "span.floatLeft", "span.floatNone")
+	if rawValue == nil {
+		return nil
+	}
+	log.Println("Updated:", *rawValue)
+	return rawValue
 }
 
 func (rcv *MyfxbookProvider) drawdown(balance *float64, equity *float64) *float64 {

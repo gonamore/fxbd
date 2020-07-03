@@ -33,4 +33,6 @@ type AccountStats struct {
 
 	// other
 	SymbolStats []SymbolStats `json:"symbols,omitempty"`
+
+	UpdateTime *string `json:"update_time,omitempty"`
 }
