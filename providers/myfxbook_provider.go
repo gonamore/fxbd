@@ -25,14 +25,6 @@ func NewMyfxbookProvider() *MyfxbookProvider {
 func (rcv *MyfxbookProvider) Get(accountConfig models.AccountConfig) models.AccountStats {
 	accountStats := models.AccountStats{}
 
-	//var currencySymbol string
-	//switch accountConfig.Currency {
-	//case "USD":
-	//	currencySymbol = "$"
-	//default:
-	//	currencySymbol = ""
-	//}
-
 	geziyor.NewGeziyor(&geziyor.Options{
 		StartURLs: []string{accountConfig.Location},
 		ParseFunc: func(g *geziyor.Geziyor, r *client.Response) {
@@ -401,7 +393,6 @@ func (rcv *MyfxbookProvider) profitPeriod(s *goquery.Selection, nameMarker strin
 			return nil, nil, nil, nil, errors.New("Profit money for " + nameMarker + " is invalid: " + profitMoneyText)
 		}
 
-		//profitMoneyAsString := selection.Next().Next().Find("span").First().Text()
 		//log.Println(profitMoneyAsString)
 		profitMoney, err := rcv.numericValue(profitMoneySplitted[0])
 		if err != nil {
@@ -413,7 +404,6 @@ func (rcv *MyfxbookProvider) profitPeriod(s *goquery.Selection, nameMarker strin
 			return nil, nil, nil, nil, err
 		}
 
-		//profitPercentAsString := selection.Next().Find("span").First().Text()
 		//log.Println(profitPercentText)
 		profitPercent, err := rcv.numericValue(profitPercentSplitted[0])
 		if err != nil {
@@ -441,7 +431,6 @@ func (rcv *MyfxbookProvider) profitPeriod(s *goquery.Selection, nameMarker strin
 
 		return profitMoney, profitMoneyPrevious, profitPercent, profitPercentPrevious, nil
 	}
-	//return nil, nil, nil, nil, errors.New("Empty profit money for " + nameMarker)
 	return nil, nil, nil, nil, nil
 }
 

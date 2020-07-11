@@ -10,7 +10,7 @@ import (
 type Resolver struct {
 }
 
-// Returns conf object in order: YAML, ENV.
+// Returns conf object in order: JSON, YAML, ENV.
 func (rcv *Resolver) GetConfig() (*models.ApplicationConfig, error) {
 	jsonReader := readers.NewJsonApplicationConfigReader("application_config.json")
 	yamlReader := readers.NewYamlApplicationConfigReader("application_config.yaml")

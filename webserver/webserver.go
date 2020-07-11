@@ -21,11 +21,6 @@ func NewWebServer(applicationConfig *models.ApplicationConfig) *WebServer {
 }
 
 func (rcv *WebServer) Start() {
-	//http.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
-	//	http.ServeFile(res, req, path.Join(applicationConfig.StatsDir, "index.html"))
-	//})
-	//log.Fatal(http.ListenAndServe(":" + strconv.Itoa(rcv.applicationConfig.Port), nil))
-
 	router := mux.NewRouter()
 
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("webserver/assets/"))))
