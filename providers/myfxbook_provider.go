@@ -39,6 +39,11 @@ func (rcv *MyfxbookProvider) Get(accountConfig models.AccountConfig) models.Acco
 			//fmt.Println(string(r.Body))
 
 			r.HTMLDoc.Find("li").Each(func(_ int, s *goquery.Selection) {
+				currencySign := rcv.currencySign(s)
+				if currencySign != nil {
+					accountStats.CurrencySign = currencySign
+				}
+
 				balance := rcv.balance(s)
 				if balance != nil {
 					accountStats.Balance = rcv.normalizeCurrency(*balance, accountConfig.CurrencyDivider)
@@ -83,7 +88,7 @@ func (rcv *MyfxbookProvider) Get(accountConfig models.AccountConfig) models.Acco
 			r.HTMLDoc.Find("tr").Each(func(_ int, s *goquery.Selection) {
 				dayProfitMoney, dayProfitMoneyPrevious, dayProfitPercent, dayProfitPercentPrevious, err := rcv.profitPeriod(s, "Today", "td")
 				if err != nil {
-					log.Println("Cannot fetch day profit", err)
+					log.Println("Cannot fetch day profit:", err)
 				} else {
 					if dayProfitMoney != nil && dayProfitPercent != nil {
 						accountStats.DayProfitMoney = rcv.normalizeCurrency(*dayProfitMoney, accountConfig.CurrencyDivider)
@@ -97,7 +102,7 @@ func (rcv *MyfxbookProvider) Get(accountConfig models.AccountConfig) models.Acco
 
 				weekProfitMoney, weekProfitMoneyPrevious, weekProfitPercent, weekProfitPercentPrevious, err := rcv.profitPeriod(s, "This Week", "td")
 				if err != nil {
-					log.Println("Cannot fetch week profit", err)
+					log.Println("Cannot fetch week profit:", err)
 				} else {
 					if weekProfitMoney != nil && weekProfitPercent != nil {
 						accountStats.WeekProfitMoney = rcv.normalizeCurrency(*weekProfitMoney, accountConfig.CurrencyDivider)
@@ -111,7 +116,7 @@ func (rcv *MyfxbookProvider) Get(accountConfig models.AccountConfig) models.Acco
 
 				monthProfitMoney, monthProfitMoneyPrevious, monthProfitPercent, monthProfitPercentPrevious, err := rcv.profitPeriod(s, "This Month", "td")
 				if err != nil {
-					log.Println("Cannot fetch month profit", err)
+					log.Println("Cannot fetch month profit:", err)
 				} else {
 					if monthProfitMoney != nil && monthProfitPercent != nil {
 						accountStats.MonthProfitMoney = rcv.normalizeCurrency(*monthProfitMoney, accountConfig.CurrencyDivider)
@@ -125,7 +130,7 @@ func (rcv *MyfxbookProvider) Get(accountConfig models.AccountConfig) models.Acco
 
 				yearProfitMoney, yearProfitMoneyPrevious, yearProfitPercent, yearProfitPercentPrevious, err := rcv.profitPeriod(s, "This Year", "td")
 				if err != nil {
-					log.Println("Cannot fetch year profit", err)
+					log.Println("Cannot fetch year profit:", err)
 				} else {
 					if yearProfitMoney != nil {
 						accountStats.YearProfitMoney = rcv.normalizeCurrency(*yearProfitMoney, accountConfig.CurrencyDivider)
@@ -146,6 +151,24 @@ func (rcv *MyfxbookProvider) Get(accountConfig models.AccountConfig) models.Acco
 	}).Start()
 
 	return accountStats
+}
+
+func (rcv *MyfxbookProvider) currencySign(s *goquery.Selection) *string {
+	rawValue := rcv.rawValue(s, "Balance", "span.floatLeft", "span.floatNone")
+	if rawValue == nil {
+		return nil
+	}
+	//log.Println("CurrencySign raw:", *rawValue)
+
+	trimmed := strings.TrimSpace(*rawValue)
+	if len(trimmed) == 0 {
+		log.Println("Cannot determine currency sign: empty value")
+		return nil
+	}
+
+	result := trimmed[0:1]
+	log.Println("CurrencySign:", result)
+	return &result
 }
 
 func (rcv *MyfxbookProvider) balance(s *goquery.Selection) *float64 {

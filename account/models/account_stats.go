@@ -2,6 +2,7 @@ package models
 
 type AccountStats struct {
 	// general
+	CurrencySign    *string  `json:"currency_sign,omitempty"`
 	Balance         *float64 `json:"balance,omitempty"`
 	Equity          *float64 `json:"equity,omitempty"`
 	Profit          *float64 `json:"profit,omitempty"`

@@ -6,8 +6,16 @@
     <style type="text/css">
         html {
             background-color: #eee;
-            font-family: Calibri, 'Times New Roman', Times, serif;
+            font-family: Tahoma, sans-serif;
             font-size: 12pt;
+        }
+
+        .fork-github {
+            float: right;
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: -1;
         }
 
         .container {
@@ -111,6 +119,11 @@
 </head>
 <body>
 
+<a href="https://github.com/gonamore/fxbd" target="_blank">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJUAAACVCAMAAABmfEh9AAACwVBMVEUAAABVVVVWVlZXV1dYWFhZWVlaWlpbW1tcXFxdXV1eXl5fX19gYGBhYWFiYmJjY2NkZGRlZWVmZmZnZ2doaGhpaWlqampra2tsbGxtbW3///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjIyMhISEgICAfHx8fHx9nZ2dkZGRiYmJlZWVhYWFkZGRfX19dXV1cXFxbW1tbW1tcXFxeXl5dXV1eXl5oaGhtbW1oaGhpaWlqamp0dHRra2tsbGxtbW1ubm5vb29xcXFzc3NwcHBxcXFycnJzc3N0dHRTU1NUVFRVVVVWVlZXV1dYWFhZWVlaWlpbW1tcXFxdXV1eXl5fX19gYGBhYWFiYmJjY2NkZGRlZWVmZmZnZ2doaGhpaWlqampra2tsbGxtbW1ubm5vb29wcHBxcXFycnJzc3N0dHR1dXV2dnZ3d3d4eHh5eXl6enp7e3t8fHx9fX1+fn5/f3+AgICBgYGCgoKDg4OEhISFhYWGhoaHh4eIiIiJiYmKioqLi4uMjIyNjY2Ojo6Pj4+QkJCRkZGSkpKTk5OUlJSVlZWWlpaXl5eYmJiZmZmampqbm5ucnJydnZ2enp6fn5+goKChoaGioqKjo6OkpKSlpaWmpqanp6eoqKipqamqqqqrq6usrKytra2urq6vr6+wsLCxsbGysrKzs7O0tLS1tbW2tra3t7e6urq7u7u8vLy9vb2+vr6/v7/AwMDBwcHHx8fIyMjJycnLy8vR0dHS0tLT09PU1NTV1dXd3d3e3t7f39/g4ODo6Ojp6enq6urz8/P09PT///+UpXT5AAAAa3RSTlMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAgMEBQYHCAkKCwwNDhAREhMVFhcYGhscHR4fICEiIyQlJicoKSosLi83Oz0/QIqNkJGTlJWYmpucnJydndra29vb29zc3Nzc3Nzd3d3d3fyfLPYAAAABYktHROrI2hYuAAANT0lEQVR42u2c6V9bZRbHOzPu+65DWy22Yu0o007d6lr3js6ijo7j6OyrYymQQJKb3CQQklQKBEIbytLaQq0iEJZQIBASCqid0hYFpC5jW5Mq9j5/xZzn3tyb5D4XcpPcQF74vIC33895zj3L75wny7LYs2zZ8uUrb85enfNso7/NFv80+bt+/9SD927I/cnaNdm3rFyxfHmWkmdZDNWa29c9VzM24IyPVelufvXph+/f+NO0YBFUub9sOdonw1p1w55/PPPoprvTghVFteLmVatz1uVu/FXFYPsOGVieA69t2fzA3evTgCVQLcNUt+bccdeG+57f/7G/Kj5WVW/7G1seSwtWNNXKW7LXrL1z/T0PveAaao1PZW8aan/t5489mAasKCpwLO4KN21+se7IcG18rnJ3y5/TghVNBca69TbWWI//dt+HPTJcvj7Q8890YEWoeGNhz3rkiZcqfd0yfKu2qzkdlxhDtQIHUggOP7v/0Sdfap70yfgSnQNd/1EeK4pKjOXwynH5xoH3lLdWNJUYq/FYQEaU39F18G9KY8VQibBebhrpkJMTA11/URgrlkpsrerDfTXz41jh4P8O936FL1FEJcJ6peXYgH1epDI4LJjL1/OGolhiKrG1Krztb0lClZVZLKWlFguA2ez1ve8oai2CKkuE9fZkoFoKylJaYoZTAlxgrUpP678UxCKpxFi7fW1SUCVmk5E2GgELbtFm3zPsfl05LAkqMdbOD4dqSSgTbdB7TxpoFgsHCHfzHxTDkqISYf1u/0ceCShK14/QSYPRXMpS2er9HsUuUZJKbK2Koc5KAkoLUHPoJG0qtbBUtl3dLUq5vDSVGAvKwIooqlIzrcdQvaazaNwYvkKbrbqvU6GcOA+VGMs52Br9+ZkM+PpOFahMX1pp/gohJw62KWOt+ajEWPVHA7WRCzTqB/D1TReqi3VAFb5CKAM731Ek+cxLJcJ6Ze9oZxTVIEJ9hiDaqyrS6o1m/gpttsZAz18VwJqfSmytqoCnmqfai1C/utDwniFwuERnMLExi8uJ1Z1KlIELUImwXm45Prg97FfmoXFtsbpgD4MQU0fRJjOXejDYzsGe1F1+ISoiQHjb7CwVRAYDpS3aySB/K/OFhoKgVRLmgpzY927K1lqQSoy158RIDRQL2FhGA6U5jXrz8+eYIsACcwFXGXuLFT2tqbYYC1MRX6K/3SZg6dDpgvwpNK1ylepYrtKw1zf5O/+UGlYcKjFW7ZjXyWKVmGnqO6Z1GjGUkwkVaXTWr/cIWBXuFF0+HpU4Jzaz0gibdAz14OzBmmr4e9pkPos+MwlRvs7v+XcqWHGpCJcfdFfwobSsv63QCS7/36AhhGb1kdxjc/UcSMVa8anEWPsmA1VceKD1Os0uBnny8nRBNKOhosOp41BHCkWzDCqi3sLSSNjjrd+h3oJtADWtrqDoKKrUpBE5VGKsuiP+Wv5DbIAYrw9CMEVMAy24OyeNHEhaGpFFJc6J+8a7w9aCOktjCqEg+uJwfwNtEmIWPg3JSyPyqMTWqhzucQhB/ks0M4HKi7UUHQ7xPJYzaWlEJpUYq+WEr5yLWybaOlYcChVrdJSeNoZDPK/YeLuTy4lyqbKkpBGMBZeor0LHtTodRVENBtpojsQHe2N/ctKIbCoxVtOxERzloS000TXfNFCUTqfdzcyCwSLBFEsj7ybjW/KpCKxAB7aWBXeGTmjDdBoXg+ZGwb1wcWpNSRpJgEqMVT3aX8N29tBFQ3eoq2PQRAj1aWKxqpKRRhKhEgeIlol+zrewuQwNDBQ2fjQnxnL5PAlH+YSoxNba4W0rZ8UZwIJ82FdQwzDfogkOS3D53YlLI4lRSUgjDta5IMyP96uB7KAOMdBhxIT5Sk9bgl11glRE8vG1CoWNbj+DerY2os8LceNTEp0ThzsSk0YSpRJj7frIV8u100b9GDgWVFvVtpF2aHxic2JLQtVpwlSENILHBVxhQ9XhO+zuhjLwrDW6rElYGkmcisiJPpBGwjVzBVRbBxE62oq8dFSMh7OzKxFpJAkqIidO+ir4Un60r+BbFGR60RiWkCxlViFA1PQnII0kQyXGqgFpJJypKY0afQ7lMlOpx82YJVLY2Bu9rbKtlRSVGKthwu8UsJg5kynUr6VwojZHFzY7Ot+Rq0EkRyVu9veOugVrDaA5l0ajhcLGgCubqDqwKdAtEytJKqKwGemt5uXSzhNQPsBpGWvBzWtJBKtabk5MlipLalzAFc1GKCAobemnCKFPtVgaiWDtGpInjSRNJSGNbOcztRFU009RqHUGubA0ErGWvf7QQTnWSp6KzIkjNdZwYWPUt6CQId+DAurmsL4VdnmQRmSE0xSoCGlkmJdGICmOobehgkC2adQRU9jYZUkjqVAR0sj4UC2ffbxoppVBvimEQh16PqBaw+OCuKk6JSoiJx7pE+TcWXD24SkUDDDIwTaKlrDsZtsdXxpJjYooA4dAGuFT9eHt0yioLxhBLQbckZWUwIgMT8hAGomXE1OkIqURf6UwvDgMHl9Az6EqNp6aTGY+pDr63AsXzalSEb41JOREve6YWQ3t/nEc5g0Gmqb5SG9vijMuSJmKGNwd5aSREiydakvPolkN28AeGD/RSRv5whmkkYUastSpxFH+7bGusHQK2ecEmtXB0VrOgPOj/9kF8bRxQWlEASpiXOD3OIQo/4EeumpsMuZYxxk0yX6NbIBwLjQuUIKKGBecGHorHE6xvSgdQIXKi4o1XzMGfvgK0sjg/NKIIlRE0ex93861r/ga9bpRNGdSq4s0A169QXAte0P/vOMCZagIDeI4jAsi8wIG7VOpMJZGd3JSwLLt6J5PGlGISozVGGi32fgQcQCF1CqVUaUuKm5GwiVa2XGBtEipFBVRy48O4K0R3FXTVjSnVtXO1apU+4pGOygOi3WuynnKQMWoxDmRlUa4nAjx4fQEQoGCXjShNrNTH15AhU1KqSivHBU5LmgvDxuLOg7BqrfAgxjndGgGtEohyrOblCSWglQS4wIHnxMtZ/sKexFTPYzQtLFIM9soRAjYpCQrCCWpxFgu3/ucGAhYu4sPAZQWlPmgoXAGfWfl2wx7k48cFyhKRWB9NFzLy/J1cH1UEH3SPZUHgzKXNqJxSWxSKksldnm8ScmVzDTV7yo8haa2vrl1CvhUxZYGQR+pD3hEcUthKsLlfV1V/CVq9qFT2/K2foJQd16+McQ04juU3qRUmipLYpOS76p3o7m926bQuXPnqmAexUSMZasRbVIqTkUozd5WfrVGP3DGBD5VVXXuHEC5uP0MNlPDJmWMNKI8FSGN4E1KTkjCeZpx5r1ZDzMyp1rL9T5c8ondpEwDlbiw2XM4LI3geeIZV2E+jg9fUTuLoxYhWGkkUp2mg4qURvpqrMLgTk0H0bkuTZDZpYmZkkVvUqaFSkoaEbBKQXNzaIIoaCziRC6+DARpBHLiA/h1QXqoJKSRt8K9Pu04C671FZqiCg65ICV+5uMFVJBG8LgAY6WJSnKTkosQhjKXKoBO5eV5oEItnkXfbBcWuPAm5ZbNmzbmpotKcpPSyhU2uuI5ROX1wHdYMAMaeGSBC8YF7te3PHr/hrRREZP9D0AasXLjAu0Z5PeDd0HyCZlZJUnQTt0trz/z8L3po5LcpGRHPrS+7jRELMebkHxCbVp9FBWWRv7+9INppCI3Kd3CuEBzBlz+ExQcZlBFDBXepHz1qXRSETnx42FBsSl1FYJio9sWAMUmhgo2Kd1/TCsVIY0MhrdGOMUGNeUbGFQVWaIMu/xgW3qpyE3KsDTCYX0Bktsou60Y+6CmM81UhDQy2iUISVqsiBynojc7+U3KdFNJSCPcuAD31N4xR+yiAX/STkVuUmJphMuJcIwAFZmcLx4VKY202SNb+/za/qJTSW9Sci8cSqNmdYtMRVSn4U1K7khALQ4VsQHOPTLl5wJLRUVII3EemS4SFSmNdOzIACpJaWTpqYj1jKH3M4GK3KSc/5HpIlIR0sgH3ZlARW5SdjkygIrcGhkqzwCqLJmPTBeZSmKTsiYDqLJkPTJddCrJTcqlp5IeFyw5FTFCHyQemS4FlfQm5ZJTkZuUbZlART4y9dVmAFWcR6ZLRUWOC6IfmS4ZFTkuGK7IACqpTcoMoCKkkQnhhxeWkop8ZOrOBCqisAn0VmcAFTEu4B6ZLjVVLNYTv8GblBlAFYP1yOMv7pnEZeCSU0Vj3ffQ5hfq8e9vLT1VFNaGezY99Hzt+KAzA6giWHet33jPfb9uPnIoE6gErDvuzF2/YeMvKoYygorHylm77s67cnOf209Q/SCB80N8fgTnvPPOO//88y+44IILL7zwoosuvvjiSy659NJLL7vs8suvuOKKK6+86qqrr77mmmuvve6666+/4YYbb7zpph+LThjrtpy1d6xbt+5ZgmqJDou16tbVa3Jybr89J1OoOKxbVmUD2JrVGUPFYmGuVdnZ2ZlDBVgsFz4ZRIWxlq9YAWQrM4mK48Ins6h4ssyjiorl31PJp8qw8z3V91TpOP8HZcUtrR1HPF4AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC"
+         class="fork-github" alt="Fork me on GitHub">
+</a>
+
 {{range .Accounts}}
     {{ if . }}
         <div class="container">
@@ -127,17 +140,17 @@
             <div class="boxer">
                 <div class="box-row">
                     <div class="box first-col">Balance</div>
-                    <div class="box second-col">{{ if .Stats.Balance }}{{ .Stats.Balance }}{{else}}-{{ end }}</div>
+                    <div class="box second-col">{{ if .Stats.Balance }}{{.Stats.CurrencySign}} {{ .Stats.Balance }}{{else}}-{{ end }}</div>
                 </div>
                 <div class="box-row">
                     <div class="box first-col">Equity</div>
-                    <div class="box second-col">{{ if .Stats.Equity }}{{ .Stats.Equity }}{{else}}-{{ end }}</div>
+                    <div class="box second-col">{{ if .Stats.Equity }}{{.Stats.CurrencySign}} {{ .Stats.Equity }}{{else}}-{{ end }}</div>
                 </div>
                 <div class="box-row">
                     <div class="box first-col">Profit</div>
                     <div class="box second-col {{ ColorOf .Stats.Profit }}">
                         {{ if .Stats.Profit }}
-                            {{ if gt (DerefFloat .Stats.Profit) 0.0 }}+{{end}}{{ .Stats.Profit }}
+                            {{.Stats.CurrencySign}} {{ if gt (DerefFloat .Stats.Profit) 0.0 }}+{{end}}{{ .Stats.Profit }}
                         {{else}}
                             -
                         {{ end }}
@@ -176,7 +189,7 @@
                     <div class="box three-col-second">
                         {{ if .Stats.DayProfitMoney }}
                             <div class="three-col-value {{ ColorOf .Stats.DayProfitMoney }}">
-                                {{ ValueOf .Stats.DayProfitMoney }}
+                                {{.Stats.CurrencySign}} {{ ValueOf .Stats.DayProfitMoney }}
                             </div>
                             {{ if .Stats.DayProfitPercent }}
                                 <div class="three-col-value">
@@ -190,7 +203,7 @@
                     <div class="box three-col-third">
                         {{ if .Stats.DayProfitMoneyPrevious }}
                             <div class="three-col-value {{ ColorOf .Stats.DayProfitMoneyPrevious }}">
-                                {{ ValueOf .Stats.DayProfitMoneyPrevious }}
+                                {{.Stats.CurrencySign}} {{ ValueOf .Stats.DayProfitMoneyPrevious }}
                             </div>
                             {{ if .Stats.DayProfitPercentPrevious }}
                                 <div class="three-col-value">
@@ -203,11 +216,42 @@
                     </div>
                 </div>
                 <div class="box-row">
+                    <div class="box three-col-first">Week</div>
+                    <div class="box three-col-second">
+                        {{ if .Stats.WeekProfitMoney }}
+                            <div class="three-col-value {{ ColorOf .Stats.WeekProfitMoney }}">
+                                {{.Stats.CurrencySign}} {{ ValueOf .Stats.WeekProfitMoney }}
+                            </div>
+                            {{ if .Stats.WeekProfitPercent }}
+                                <div class="three-col-value">
+                                    ({{ ValueOf .Stats.WeekProfitPercent }} %)
+                                </div>
+                            {{ end }}
+                        {{else}}
+                            -
+                        {{ end }}
+                    </div>
+                    <div class="box three-col-third">
+                        {{ if .Stats.WeekProfitMoneyPrevious }}
+                            <div class="three-col-value {{ ColorOf .Stats.WeekProfitMoneyPrevious }}">
+                                {{.Stats.CurrencySign}} {{ ValueOf .Stats.WeekProfitMoneyPrevious }}
+                            </div>
+                            {{ if .Stats.WeekProfitPercentPrevious }}
+                                <div class="three-col-value">
+                                    ({{ ValueOf .Stats.WeekProfitPercentPrevious }} %)
+                                </div>
+                            {{ end }}
+                        {{else}}
+                            -
+                        {{ end }}
+                    </div>
+                </div>
+                <div class="box-row">
                     <div class="box three-col-first">Month</div>
                     <div class="box three-col-second">
                         {{ if .Stats.MonthProfitMoney }}
                             <div class="three-col-value {{ ColorOf .Stats.MonthProfitMoney }}">
-                                {{ ValueOf .Stats.MonthProfitMoney }}
+                                {{.Stats.CurrencySign}} {{ ValueOf .Stats.MonthProfitMoney }}
                             </div>
                             {{ if .Stats.MonthProfitPercent }}
                                 <div class="three-col-value">
@@ -221,7 +265,7 @@
                     <div class="box three-col-third">
                         {{ if .Stats.MonthProfitMoneyPrevious }}
                             <div class="three-col-value {{ ColorOf .Stats.MonthProfitMoneyPrevious }}">
-                                {{ ValueOf .Stats.MonthProfitMoneyPrevious }}
+                                {{.Stats.CurrencySign}} {{ ValueOf .Stats.MonthProfitMoneyPrevious }}
                             </div>
                             {{ if .Stats.MonthProfitPercentPrevious }}
                                 <div class="three-col-value">
@@ -238,7 +282,7 @@
                     <div class="box three-col-second">
                         {{ if .Stats.YearProfitMoney }}
                             <div class="three-col-value {{ ColorOf .Stats.YearProfitMoney }}">
-                                {{ ValueOf .Stats.YearProfitMoney }}
+                                {{.Stats.CurrencySign}} {{ ValueOf .Stats.YearProfitMoney }}
                             </div>
                             {{ if .Stats.YearProfitPercent }}
                                 <div class="three-col-value">
@@ -252,7 +296,7 @@
                     <div class="box three-col-third">
                         {{ if .Stats.YearProfitMoneyPrevious }}
                             <div class="three-col-value {{ ColorOf .Stats.YearProfitMoneyPrevious }}">
-                                {{ ValueOf .Stats.YearProfitMoneyPrevious }}
+                                {{.Stats.CurrencySign}} {{ ValueOf .Stats.YearProfitMoneyPrevious }}
                             </div>
                             {{ if .Stats.YearProfitPercentPrevious }}
                                 <div class="three-col-value">
@@ -273,6 +317,7 @@
                         <div class="box three-col-second"><b>Open Trades</b></div>
                         <div class="box three-col-third"><b>Buy/Sell (Lots)</b></div>
                     </div>
+                    {{$currencySign := .Stats.CurrencySign}}
                     {{range .Stats.SymbolStats}}
                         {{ if . }}
                             <div class="box-row">
@@ -281,7 +326,7 @@
                                 </div>
                                 <div class="box three-col-second">
                                     <div class="three-col-value {{ ColorOf .Profit }}">
-                                        {{ if gt (DerefFloat .Profit) 0.0 }}+{{end}}{{ .Profit }}
+                                        {{$currencySign}} {{ if gt (DerefFloat .Profit) 0.0 }}+{{end}}{{ .Profit }}
                                     </div>
                                     {{ if .ProfitPercent }}
                                         <div class="three-col-value">
