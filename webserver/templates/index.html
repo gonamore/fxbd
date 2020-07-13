@@ -70,18 +70,7 @@
         .update-time span {
             text-align: right;
             float: right;
-        }
-
-        .first-col {
-        }
-
-        .second-col {
-            width: 66%;
-        }
-
-        .periods {
-            margin-top: 6px;
-
+            padding-right: 3px;
         }
 
         .periods-title {
@@ -89,17 +78,19 @@
         }
 
         .three-col-first {
-
+            white-space: nowrap;
         }
 
         .three-col-second {
-            width: 33%;
             white-space: nowrap;
         }
 
         .three-col-third {
-            width: 33%;
             white-space: nowrap;
+        }
+
+        .three-col-second:nth-child(2n) {
+            padding: 0 10px;
         }
 
         .three-col-value {
@@ -129,9 +120,7 @@
         <div class="container">
             <div class="boxer">
                 <div class="box-row">
-                    <div class="box account-name">
-                        {{ .Config.Name }}
-                    </div>
+                    <div class="box account-name">{{ .Config.Name }}</div>
                 </div>
             </div>
 
@@ -139,46 +128,37 @@
 
             <div class="boxer">
                 <div class="box-row">
-                    <div class="box first-col">Balance</div>
-                    <div class="box second-col">{{ if .Stats.Balance }}{{.Stats.CurrencySign}} {{ .Stats.Balance }}{{else}}-{{ end }}</div>
+                    <div class="box three-col-first">Balance</div>
+                    <div class="box three-col-second">{{ if .Stats.Balance }}{{.Stats.CurrencySign}} {{ NoSignValueOf .Stats.Balance }}{{else}}-{{ end }}</div>
+                    <div class="box three-col-third"></div>
                 </div>
-                <div class="box-row">
-                    <div class="box first-col">Equity</div>
-                    <div class="box second-col">{{ if .Stats.Equity }}{{.Stats.CurrencySign}} {{ .Stats.Equity }}{{else}}-{{ end }}</div>
-                </div>
-                <div class="box-row">
-                    <div class="box first-col">Profit</div>
-                    <div class="box second-col {{ ColorOf .Stats.Profit }}">
-                        {{ if .Stats.Profit }}
-                            {{.Stats.CurrencySign}} {{ if gt (DerefFloat .Stats.Profit) 0.0 }}+{{end}}{{ .Stats.Profit }}
-                        {{else}}
-                            -
-                        {{ end }}
-                    </div>
-                </div>
-                <div class="box-row">
-                    <div class="box first-col">Drawdown</div>
-                    <div class="box second-col {{ ColorOf .Stats.Drawdown }}">
-                        {{ if .Stats.Drawdown }}
-                            {{ if gt (DerefFloat .Stats.Drawdown) 0.0 }}+{{end}}{{ .Stats.Drawdown }} %
-                        {{else}}
-                            -
-                        {{ end }}
-                    </div>
-                </div>
-                <div class="box-row">
-                    <div class="box first-col">OverallDrawdown</div>
-                    <div class="box second-col {{ ColorOf .Stats.OverallDrawdown }}">
-                        {{ if .Stats.OverallDrawdown }}
-                            {{ if gt (DerefFloat .Stats.OverallDrawdown) 0.0 }}+{{end}}{{ .Stats.OverallDrawdown }} %
-                        {{else}}
-                            -
-                        {{ end }}
-                    </div>
-                </div>
-            </div>
 
-            <div class="boxer periods">
+                <div class="box-row">
+                    <div class="box three-col-first">Equity</div>
+                    <div class="box three-col-second">{{ if .Stats.Equity }}{{.Stats.CurrencySign}} {{ NoSignValueOf .Stats.Equity }}{{else}}-{{ end }}</div>
+                    <div class="box three-col-third"></div>
+                </div>
+
+                <div class="box-row">
+                    <div class="box three-col-first">Profit</div>
+                    <div class="box three-col-second {{ ColorOf .Stats.Profit }}">{{ if .Stats.Profit }}{{.Stats.CurrencySign}} {{ if gt (DerefFloat .Stats.Profit) 0.0 }}+{{end}}{{ NoSignValueOf .Stats.Profit }}{{else}}-{{ end }}</div>
+                    <div class="box three-col-third"></div>
+                </div>
+
+                <div class="box-row">
+                    <div class="box three-col-first">Drawdown</div>
+                    <div class="box three-col-second {{ ColorOf .Stats.Drawdown }}">{{ if .Stats.Drawdown }}{{ if gt (DerefFloat .Stats.Drawdown) 0.0 }}+{{end}}{{ .Stats.Drawdown }} %{{else}}-{{ end }}</div>
+                    <div class="box three-col-third"></div>
+                </div>
+
+                <div class="box-row">
+                    <div class="box three-col-first">OverallDrawdown</div>
+                    <div class="box three-col-second {{ ColorOf .Stats.OverallDrawdown }}">{{ if .Stats.OverallDrawdown }}{{ if gt (DerefFloat .Stats.OverallDrawdown) 0.0 }}+{{end}}{{ .Stats.OverallDrawdown }} %{{else}}-{{ end }}</div>
+                    <div class="box three-col-third"></div>
+                </div>
+
+                <div class="boxer-separator"></div>
+
                 <div class="box-row periods-title">
                     <div class="box three-col-first"></div>
                     <div class="box three-col-second"><b>Current</b></div>
@@ -308,15 +288,16 @@
                         {{ end }}
                     </div>
                 </div>
-            </div>
 
-            {{ if .Stats.SymbolStats }}
-                <div class="boxer periods">
+                <div class="boxer-separator"></div>
+
+                {{ if .Stats.SymbolStats }}
                     <div class="box-row periods-title">
                         <div class="box three-col-first"></div>
                         <div class="box three-col-second"><b>Open Trades</b></div>
                         <div class="box three-col-third"><b>Buy/Sell (Lots)</b></div>
                     </div>
+
                     {{$currencySign := .Stats.CurrencySign}}
                     {{range .Stats.SymbolStats}}
                         {{ if . }}
@@ -343,16 +324,14 @@
                             </div>
                         {{ end }}
                     {{ end }}
-                </div>
-            {{end}}
+                {{end}}
+            </div>
 
             <div class="boxer-separator"></div>
 
             <div class="boxer">
                 <div class="box-row">
-                    <div class="box update-time">
-                        <span>Last updated: {{ .Stats.UpdateTime }}</span>
-                    </div>
+                    <div class="box update-time"><span>Last updated: {{ .Stats.UpdateTime }}</span></div>
                 </div>
             </div>
         </div>

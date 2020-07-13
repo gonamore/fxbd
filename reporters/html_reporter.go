@@ -73,12 +73,15 @@ func (rcv *HtmlReporter) Assemble() {
 		},
 		"ValueOf": func(number *float64) string {
 			if *number == 0.0 {
-				return "0"
+				return "0.00"
 			} else if *number > 0 {
 				return "+" + fmt.Sprintf("%.2f", *number)
 			} else {
 				return fmt.Sprintf("%.2f", *number)
 			}
+		},
+		"NoSignValueOf": func(number *float64) string {
+			return fmt.Sprintf("%.2f", *number)
 		},
 	}).ParseFiles("webserver/templates/index.html"))
 
